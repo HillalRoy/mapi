@@ -1,6 +1,12 @@
 import React from 'react';
 import './App.scss';
 import { HomePage } from './screens/Home';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 import firebase from 'firebase';
 import 'firebase/firestore'
@@ -20,8 +26,19 @@ firebase.initializeApp({
 function App() {
   return (
     <div className="App">
-     
-      <HomePage></HomePage> 
+    <Router>
+
+      <Switch>
+
+        <Route path="/play">
+          hellow
+        </Route>
+        <Route path="/">
+
+          <HomePage></HomePage> 
+        </Route>
+      </Switch>
+    </Router>
     </div>
   );
 }
