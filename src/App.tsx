@@ -1,24 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import { HomePage } from './screens/Home';
+
+import firebase from 'firebase';
+import 'firebase/firestore'
+
+firebase.initializeApp({
+  apiKey: "AIzaSyAqoZ0vfJCotYvF2Vzn6wP0smSqcSRNjMs",
+  authDomain: "mapi-c1e47.firebaseapp.com",
+  databaseURL: "https://mapi-c1e47-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "mapi-c1e47",
+  storageBucket: "mapi-c1e47.appspot.com",
+  messagingSenderId: "325914929273",
+  appId: "1:325914929273:web:94ed448366e2445db38ca8",
+  measurementId: "G-KLTLYCSS41"
+})
+
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     
+      <HomePage></HomePage> 
     </div>
   );
 }
