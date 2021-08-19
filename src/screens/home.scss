@@ -1,6 +1,25 @@
+@import "./screens.scss";
 
 
 #home{
-    background-color: #558246;
+    display: grid;
 
+    .hedding{
+        #jis-logo{
+            margin: auto;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+        #app-title{
+            font-size: 4rem;
+        }
+        #slogan{
+            font-size: 1.3rem;
+        }
+    }
+    .bottom{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
 }
