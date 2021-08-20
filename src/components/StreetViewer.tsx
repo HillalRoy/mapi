@@ -1,12 +1,43 @@
 import React, { useEffect } from "react";
+import { loadGMaps } from "../gapi/loadGMap";
+import { useAppSelector } from "../hooks/redux";
+import { getCurCoordinates, getCurCountry } from "../store/GameReducers";
+
+const setStreetVIew = async (fenway: {lat: number, lng: number}) => {
+  const google = await loadGMaps()
+  const map = new google.maps.Map(
+    document.getElementById("map") as HTMLElement,
+    {
+      center: fenway,
+      zoom: 14,
+    }
+  );
+
+  const panorama = new google.maps.StreetViewPanorama(
+    document.getElementById("pano") as HTMLElement,
+    {
+      position: fenway,
+      pov: {
+        heading: 34,
+        pitch: 10,
+      },
+    }
+  );
+  map.setStreetView(panorama);
+};
 
 export const StreetView = () => {
+  const coordinates = useAppSelector(getCurCoordinates)
 
-  useEffect(()=> {
-    console.log( document.getElementById('neoo'))
-  })
 
-  return <>
-    <div id="neoo"></div>
-  </>;
+  useEffect(() => {
+    setStreetVIew(coordinates)
+  }, [coordinates]);
+
+  return (
+    <>
+      <div id="map"></div>
+      <div id="pano"></div>
+    </>
+  );
 };

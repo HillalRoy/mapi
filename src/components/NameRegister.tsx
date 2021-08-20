@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { getUsername, setUsername } from "../store/reducers";
+import { getUsername, setUsername } from "../store/UserReducers";
 
 import "./name-register.scss";
 export const NameRegister = () => {

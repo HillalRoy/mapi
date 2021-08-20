@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Peralta&display=swap');
 * {
-
+  user-select: none;
   padding: 0;
   margin: 0;
   font-family: Peralta;
@@ -31,4 +31,51 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+
+// google
+// button {
+//   width: 100px;
+//   height: 25px;
+//   color: white;
+//   background-color: red;
+// }
+
+#floating-panel {
+  position: absolute;
+  top: 10px;
+  left: 5%;
+  z-index: 5;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #999;
+  text-align: center;
+  font-family: "Roboto", "sans-serif";
+  line-height: 30px;
+  padding-left: 10px;
+  width: 20%;
+  height: 30%;
+}
+
+#floating-panel {
+  margin-left: -100px;
+}
+
+img {
+  padding-top: 10px;
+}
+
+#pano {
+  float: left;
+  height: 100%;
+  width: 100%;
+}
+
+#pano>div>div:nth-child(1)>div>div:nth-child(11)>div {
+  filter: invert(1);
+}
+
+#pano>div>div:nth-child(2)>div:nth-child(2) {
+  display: none;
 }

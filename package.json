@@ -47,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@types/google.maps": "^3.45.6",
     "react-scripts": "^4.0.3"
   }
 }
