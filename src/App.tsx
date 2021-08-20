@@ -5,11 +5,11 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 
 import firebase from 'firebase';
 import 'firebase/firestore'
+import { GamePage } from './screens/Game';
 
 firebase.initializeApp({
   apiKey: "AIzaSyAqoZ0vfJCotYvF2Vzn6wP0smSqcSRNjMs",
@@ -31,7 +31,7 @@ function App() {
       <Switch>
 
         <Route path="/play">
-          hellow
+          <GamePage/>
         </Route>
         <Route path="/">
 

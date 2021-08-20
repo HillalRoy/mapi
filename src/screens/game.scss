@@ -1,0 +1,54 @@
+#game-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  #game-view {
+    width: 100%;
+    height: 100%;
+    background-color: aquamarine;
+    position: absolute;
+    z-index: -1;
+  }
+  .top {
+
+    display: flex;
+    justify-content: space-between;
+    .title {
+      font-size: 4rem;
+    }
+    .stats {
+      width: 150px;
+      height: 30vh;
+      background: #877833;
+      button {
+        cursor: pointer;
+        border: none;
+        margin: 3px 20px;
+        padding: 1rem;
+        font-size: 1.3rem;
+        background: lightgreen;
+      }
+    }
+    .logo {
+      width: 100px;
+      height: 100px;
+      background: #550415;
+    }
+  }
+  .game-controls {
+    .options {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 300px 300px;
+      justify-content: space-around;
+      button {
+        cursor: pointer;
+        border: none;
+        margin: 3px 20px;
+        padding: 1rem;
+        font-size: 1.3rem;
+        background: lightgreen;
+      }
+    }
+  }
+}
