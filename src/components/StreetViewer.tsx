@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { loadGMaps } from "../gapi/loadGMap";
 import { useAppSelector } from "../hooks/redux";
-import { getCurCoordinates, getCurCountry } from "../store/GameReducers";
+import { getCurCoordinates } from "../store/GameReducers";
 
 const setStreetVIew = async (fenway: {lat: number, lng: number}) => {
   const google = await loadGMaps()

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { getCurCountry, submitAns } from "../store/GameReducers";
 

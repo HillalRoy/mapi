@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import { GameOptions } from "../components/GameOptions";
 import { StreetView } from "../components/StreetViewer";
 import { APP_NAME } from "../Constants";
-import { loadGMaps } from "../gapi/loadGMap";
 import { useAppSelector } from "../hooks/redux";
 import { getScore } from "../store/GameReducers";
 import { getUsername } from "../store/UserReducers";
