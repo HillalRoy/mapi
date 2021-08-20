@@ -30,7 +30,8 @@ export const NameRegister = () => {
           name="name"
           id="name"
         />
-        <input type="submit" name="summit" value="START" id="submit" />
+        {/* <input type="submit" name="summit" value="START" id="submit" /> */}
+        <button type="submit"> <img src={`${process.env.PUBLIC_URL}/assets/start.png`} alt="" /> </button>
       </form>
     </div>
   );

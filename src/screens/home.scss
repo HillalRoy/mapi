@@ -3,16 +3,15 @@
 
 #home{
     display: grid;
-
+    background-size: cover;
     .hedding{
+        color: wheat;
         #jis-logo{
             margin: auto;
-            width: 200px;
-            height: 200px;
-            background-color: blue;
         }
         #app-title{
             font-size: 4rem;
+         
         }
         #slogan{
             font-size: 1.3rem;

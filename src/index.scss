@@ -76,6 +76,6 @@ img {
   filter: invert(1);
 }
 
-#pano>div>div:nth-child(2)>div:nth-child(2) {
+#pano>div>div:nth-child(2)>div:nth-child(2) , .gm-fullscreen-control{
   display: none;
 }

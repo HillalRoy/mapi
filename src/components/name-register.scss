@@ -16,5 +16,12 @@
   form {
     display: grid;
     place-items: center;
+    input{
+      border-radius: 1.6rem;
+    }
+    button img{
+      width: 10rem;
+      cursor: pointer;
+    }
   }
 }

@@ -9,7 +9,7 @@ interface UserState{
 
 // Define the initial state using that type
 const initialState: UserState = {
-    username: 'aa'
+    username: ''
 };
 
 export const usersSlice = createSlice({

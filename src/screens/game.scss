@@ -45,9 +45,14 @@
     justify-content: space-between;
     .title {
       font-size: 4rem;
+      color: wheat;
+      text-shadow: black 0 4px 4px;
+      height: fit-content;
+      margin-top: 2rem;
     }
 
     .logo img{
+      margin-right: 2rem;
       width: 100px;
     }
   }

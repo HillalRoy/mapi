@@ -4,7 +4,7 @@ import './leadboad.scss'
 export const Leadboad = () => {
 
 
-    return <div id="leadboad">
+    return <div style={{backgroundImage: "url('/assets/scoreboard.png')"}} id="leadboad">
 
     </div>
 }
