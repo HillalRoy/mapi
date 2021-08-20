@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "./store";
 
 
 interface UserState{
@@ -12,7 +13,7 @@ const initialState: UserState = {
 };
 
 export const usersSlice = createSlice({
-  name: "counter",
+  name: "users",
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
@@ -24,6 +25,6 @@ export const usersSlice = createSlice({
 
 export const { setUsername } = usersSlice.actions
 // Other code such as selectors can use the imported `RootState` type
-export const  username = (state: UserState) => state.username;
+export const  getUsername = (state: RootState) => state.users.username;
 
 export const usersReducer =  usersSlice.reducer;

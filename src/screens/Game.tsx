@@ -1,19 +1,24 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { APP_NAME } from "../Constants";
+import { useAppSelector } from "../hooks/redux";
+import { getUsername } from "../store/reducers";
 import "./game.scss";
 
 export const GamePage = () => {
+  const username = useAppSelector(getUsername);
+  const history = useHistory()
+  
+  if(username === "") history.replace("/")
+
   return (
     <section id="game-page" className="screen">
       <div id="game-view"></div>
       <div className="top">
         <div className="stats">
-
-            <button>
-
-                Restart
-            </button>
-            <button>Giveup</button>
+          {username}
+          <button>Restart</button>
+          <button>Giveup</button>
         </div>
         <div className="title"> {APP_NAME} </div>
         <div className="logo"></div>
