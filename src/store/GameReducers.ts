@@ -43,10 +43,27 @@ export const gameSlice = createSlice({
       }
       return { ...state, currentPlace: getNewPlace() };
     },
+    restartGame: (state, _: PayloadAction<any>) => { 
+      // Todo time reset
+      return {
+        ...state,
+        currentPlace: getNewPlace(),
+        score: 0,
+      }
+    },
+    giveupGame: (state, _: PayloadAction<any>) => { 
+     
+      // Todo move back to home
+      return  {
+        ...state,
+        currentPlace: getNewPlace(),
+        score: 0,
+      }
+    },
   },
 });
 
-export const { submitAns } = gameSlice.actions;
+export const { submitAns, restartGame, giveupGame } = gameSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
 export const getCurCoordinates = (state: RootState) =>
   state.game.currentPlace[0];

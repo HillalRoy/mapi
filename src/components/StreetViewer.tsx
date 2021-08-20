@@ -3,35 +3,38 @@ import { loadGMaps } from "../gapi/loadGMap";
 import { useAppSelector } from "../hooks/redux";
 import { getCurCoordinates } from "../store/GameReducers";
 
-const setStreetVIew = async (fenway: {lat: number, lng: number}) => {
-  const google = await loadGMaps()
-  const map = new google.maps.Map(
-    document.getElementById("map") as HTMLElement,
-    {
-      center: fenway,
-      zoom: 14,
-    }
-  );
+const setStreetVIew = async (fenway: { lat: number; lng: number }) => {
+  try {
+    const google = await loadGMaps();
+    const map = new google.maps.Map(
+      document.getElementById("map") as HTMLElement,
+      {
+        center: fenway,
+        zoom: 14,
+      }
+    );
 
-  const panorama = new google.maps.StreetViewPanorama(
-    document.getElementById("pano") as HTMLElement,
-    {
-      position: fenway,
-      pov: {
-        heading: 34,
-        pitch: 10,
-      },
-    }
-  );
-  map.setStreetView(panorama);
+    const panorama = new google.maps.StreetViewPanorama(
+      document.getElementById("pano") as HTMLElement,
+      {
+        position: fenway,
+        pov: {
+          heading: 34,
+          pitch: 10,
+        },
+      }
+    );
+    map.setStreetView(panorama);
+  } catch (err) {
+    console.log({ err });
+  }
 };
 
 export const StreetView = () => {
-  const coordinates = useAppSelector(getCurCoordinates)
-
+  const coordinates = useAppSelector(getCurCoordinates);
 
   useEffect(() => {
-    setStreetVIew(coordinates)
+    setStreetVIew(coordinates);
   }, [coordinates]);
 
   return (

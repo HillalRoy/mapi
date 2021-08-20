@@ -18,8 +18,8 @@ export const GameOptions = () => {
 
   return (
     <div className="options">
-      {options.map((v) => (
-        <button onClick={() => dispatch(submitAns(v))} className="z1 option">
+      {options.map((v,i) => (
+        <button key={i} onClick={() => dispatch(submitAns(v))} className="z1 option">
           {v}
         </button>
       ))}
