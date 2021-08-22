@@ -21,7 +21,8 @@ export const GameOptions = () => {
         for (let j = 0; j < 10; j++) {
 
           const place = randomChoice(places).country;
-          if (!(place in options)) {
+
+          if (options.indexOf(place) === -1 && place !== country) {
             options[i] = place;
             break;
           }
