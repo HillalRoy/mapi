@@ -1,11 +1,9 @@
 import React, { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { getCurCountry, getPlaces, submitAns } from "../store/GameReducers";
+import { random, randomChoice } from "../utils/tools";
 
 import "./gameOptions.scss";
-
-const random = (n: number) => Math.floor(Math.random() * n);
-const randomChoice: <T>(arr: T[]) => T = (arr) => arr[random(arr.length)];
 
 export const GameOptions = () => {
   const country = useAppSelector(getCurCountry);
@@ -15,19 +13,22 @@ export const GameOptions = () => {
   const options = useMemo(() => {
     const ansOp = random(4);
     const options: [string, string, string, string] = ["", "", "", ""];
+    if(places.length === 0)  return options
+
     for (let i = 0; i < options.length; i++) {
       if (i === ansOp) options[i] = country;
       else {
         for (let j = 0; j < 10; j++) {
+
           const place = randomChoice(places).country;
-          if (!(j in options)) {
-            options[i] = place
+          if (!(place in options)) {
+            options[i] = place;
             break;
           }
         }
       }
     }
-    return options
+    return options;
   }, [country, places]);
 
   return (
