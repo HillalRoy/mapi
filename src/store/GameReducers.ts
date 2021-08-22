@@ -1,32 +1,35 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import firebase from "firebase";
 import { RootState } from "./store";
 
-type Place = [{ lat: number; lng: number }, { country: string }];
-
-export const places: Place[] = [
-  // Todo
-  [{ lat: 60.171001, lng: 24.93935 }, { country: "Finland" }], // Helsinki, Finland
-  [{ lat: 48.858093, lng: 2.294694 }, { country: "France" }], // Paris, France
-  [{ lat: 51.51002, lng: -0.13473 }, { country: "Great Britain" }], // London, Great Britain
-  [{ lat: 41.8902, lng: 12.4922 }, { country: "Italy" }], // Rome, Italy
-  [{ lat: 25.195302, lng: 55.272879 }, { country: "United Arab Emirates" }], // Dubai, United Arab Emirates
-  [{ lat: 1.283404, lng: 103.863134 }, { country: "Singapore" }], // Marina Bay, Singapore
-  [{ lat: 29.976768, lng: 31.135538 }, { country: "Egypt" }], // Cairo, Egypt
-  [{ lat: 40.757876, lng: -73.985592 }, { country: "United States" }], // New York, USA
-];
-
-interface GameState {
-  currentPlace: Place; // places[Math.floor(Math.random() * (places.length))]  // Pick a random place to be spawned
+type GameState = {
+  currentPlace: Place;
+  places: Place[];
+  shownPlaces: Place[];
   score: number;
-}
+};
 
 // Define the initial state using that type
 const initialState: GameState = {
-  currentPlace: places[Math.floor(Math.random() * places.length)], // Pick a random place to be spawned
+  currentPlace: { location: { lat: 0, lng: 0 }, country: "" },
+  shownPlaces: [],
+  places: [],
   score: 0,
 };
 
-const getNewPlace = () => places[Math.floor(Math.random() * places.length)];
+const getNewPlace = (places: Place[]) =>
+  places[Math.floor(Math.random() * places.length)];
+
+export const loadPlacesThunk = createAsyncThunk("game/setPlaces", async () => {
+  const locationCollection = firebase.firestore().collection("locations");
+
+  const places = await locationCollection.get();
+  const countryList: Place[] = [];
+  places.forEach((v) => (countryList as any[]).push(v.data()));
+  console.log("lld");
+
+  return countryList;
+});
 
 export const gameSlice = createSlice({
   name: "game",
@@ -34,40 +37,49 @@ export const gameSlice = createSlice({
   initialState,
   reducers: {
     submitAns: (state, { payload: ans }: PayloadAction<string>) => {
-      if (ans === state.currentPlace[1].country) {
+      if (ans === state.currentPlace.country) {
         return {
           ...state,
-          currentPlace: getNewPlace(),
+          currentPlace: getNewPlace(state.places),
           score: state.score + 1,
         };
       }
-      return { ...state, currentPlace: getNewPlace() };
+      return { ...state, currentPlace: getNewPlace(state.places) };
     },
-    restartGame: (state, _: PayloadAction<any>) => { 
+    restartGame: (state, _: PayloadAction<any>) => {
       // Todo time reset
       return {
         ...state,
-        currentPlace: getNewPlace(),
+        currentPlace: getNewPlace(state.places),
         score: 0,
-      }
+      };
     },
-    giveupGame: (state, _: PayloadAction<any>) => { 
-     
+    giveupGame: (state, _: PayloadAction<any>) => {
       // Todo move back to home
-      return  {
+      return {
         ...state,
-        currentPlace: getNewPlace(),
+        currentPlace: getNewPlace(state.places),
         score: 0,
-      }
+      };
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(loadPlacesThunk.fulfilled, (state, { payload: places }) => ({
+      ...state,
+      places,
+      currentPlace: getNewPlace(places),
+    }))
+  }
 });
 
-export const { submitAns, restartGame, giveupGame } = gameSlice.actions;
+export const { submitAns, restartGame, giveupGame } =
+  gameSlice.actions;
+
 // Other code such as selectors can use the imported `RootState` type
 export const getCurCoordinates = (state: RootState) =>
-  state.game.currentPlace[0];
+  state.game.currentPlace.location;
 export const getCurCountry = (state: RootState) =>
-  state.game.currentPlace[1].country;
+  state.game.currentPlace.country;
+export const getPlaces = (state: RootState) => state.game.places;
 export const getScore = (state: RootState) => state.game.score;
 export const GameReducer = gameSlice.reducer;

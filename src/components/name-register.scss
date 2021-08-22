@@ -3,23 +3,29 @@
   align-items: center;
   text-align: center;
   justify-content: center;
-  input {
-    margin: 20px;
-    padding: 5px 20px;
-    display: block;
-    font-size: 2rem;
-    text-align: center;
-  }
-  #submit {
-    width: 20rem;
-  }
+
   form {
     display: grid;
     place-items: center;
-    input{
+    input,
+    .username {
+      margin: 20px;
+      margin-bottom: 0;
+      padding: 5px 20px;
+      display: block;
+      font-size: 2rem;
+      text-align: center;
+      width: 30rem;
+      background-color: white;
       border-radius: 1.6rem;
     }
-    button img{
+    .error {
+      background: white;
+      color: #bb4c4c;
+      padding: 0rem 4rem;
+      border-radius: 0  0 2rem 2rem;
+    }
+    button img {
       width: 10rem;
       cursor: pointer;
     }

@@ -15,8 +15,8 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   username,
   score,
 }) => {
-  const dispatch = useAppDispatch()
-
+  const dispatch = useAppDispatch();
+  const history = useHistory();
 
   return (
     <>
@@ -29,14 +29,28 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
           Score: {score}
         </div>
 
-        <button onClick={() => dispatch(restartGame(null))} style={buttonBg} className="ibg" >Restart</button>
+        <button
+          onClick={() => dispatch(restartGame(null))}
+          style={buttonBg}
+          className="ibg"
+        >
+          Restart
+        </button>
         <br />
-        <button onClick={() => dispatch(giveupGame(null))} style={buttonBg} className="ibg">Giveup</button>
+        <button
+          onClick={() => {
+            dispatch(giveupGame(null));
+            history.goBack()
+          }}
+          style={buttonBg}
+          className="ibg"
+        >
+          Giveup
+        </button>
       </div>
       <div className="title z1"> {APP_NAME} </div>
       <div className="logo z1">
         <img src={`${process.env.PUBLIC_URL}/assets/jis.png`} alt="" />
-
       </div>
     </>
   );

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { loadGMaps } from "../gapi/loadGMap";
-import { useAppSelector } from "../hooks/redux";
-import { getCurCoordinates } from "../store/GameReducers";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { getCurCoordinates, loadPlacesThunk } from "../store/GameReducers";
 
 const setStreetVIew = async (fenway: { lat: number; lng: number }) => {
   try {
@@ -30,11 +30,22 @@ const setStreetVIew = async (fenway: { lat: number; lng: number }) => {
   }
 };
 
+
+
 export const StreetView = () => {
   const coordinates = useAppSelector(getCurCoordinates);
+  const dispatch = useAppDispatch()
+  if(coordinates.lat + coordinates.lng === 0){
+    console.log("sendt");
+    
+    dispatch(loadPlacesThunk())
+  }
+
 
   useEffect(() => {
-    setStreetVIew(coordinates);
+    if(coordinates.lat + coordinates.lng === 0){
+    }
+    else setStreetVIew(coordinates);
   }, [coordinates]);
 
   return (

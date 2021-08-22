@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import firebase from "firebase";
 import "firebase/firestore";
 import { GamePage } from "./screens/Game";
+import { AddLocations } from "./screens/AddLocations";
 
 firebase.initializeApp({
   apiKey: "AIzaSyAqoZ0vfJCotYvF2Vzn6wP0smSqcSRNjMs",
@@ -25,6 +26,9 @@ const Routes = () => {
       <Switch>
         <Route path="/play">
           <GamePage />
+        </Route>
+        <Route path="/add-location-220">
+          <AddLocations />
         </Route>
         <Route path="/">
           <HomePage></HomePage>
