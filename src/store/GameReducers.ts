@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import firebase from "firebase";
+import { sleep } from "../utils/tools";
 import { RootState } from "./store";
 
 type GameState = {
   currentPlace: Place;
   places: Place[];
+  showAns: boolean,
   shownPlaces: Place[];
   score: number;
 };
@@ -13,6 +15,7 @@ type GameState = {
 const initialState: GameState = {
   currentPlace: { location: { lat: 0, lng: 0 }, country: "" },
   shownPlaces: [],
+  showAns: false,
   places: [],
   score: 0,
 };
@@ -26,9 +29,13 @@ export const loadPlacesThunk = createAsyncThunk("game/setPlaces", async () => {
   const places = await locationCollection.get();
   const countryList: Place[] = [];
   places.forEach((v) => (countryList as any[]).push(v.data()));
-  console.log("lld");
 
   return countryList;
+});
+
+export const showAnsThunk = createAsyncThunk("game/showAns", async (ans: string) => {
+  await sleep(1500)
+  return ans
 });
 
 export const gameSlice = createSlice({
@@ -69,6 +76,19 @@ export const gameSlice = createSlice({
       places,
       currentPlace: getNewPlace(places),
     }))
+
+    builder.addCase(showAnsThunk.fulfilled, (state, { payload: ans }) => ({
+      ...state,
+      showAns: false,
+      currentPlace: getNewPlace(state.places),
+      score: ans === state.currentPlace.country ? state.score + 1 : state.score,
+    }))
+    builder.addCase(showAnsThunk.pending, (state, { payload: ans }) => ({
+      ...state,
+      showAns: true,
+      // currentPlace: getNewPlace(state.places),
+      // score: ans === state.currentPlace.country ? state.score + 1 : state.score,
+    }))
   }
 });
 
@@ -82,4 +102,6 @@ export const getCurCountry = (state: RootState) =>
   state.game.currentPlace.country;
 export const getPlaces = (state: RootState) => state.game.places;
 export const getScore = (state: RootState) => state.game.score;
+export const getShowAns = (state: RootState) => state.game.showAns;
+
 export const GameReducer = gameSlice.reducer;

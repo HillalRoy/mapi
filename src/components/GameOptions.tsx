@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { getCurCountry, getPlaces, submitAns } from "../store/GameReducers";
+import { getCurCountry, getPlaces, getShowAns, showAnsThunk } from "../store/GameReducers";
 import { random, randomChoice } from "../utils/tools";
 
 import "./gameOptions.scss";
@@ -8,6 +8,7 @@ import "./gameOptions.scss";
 export const GameOptions = () => {
   const country = useAppSelector(getCurCountry);
   const places = useAppSelector(getPlaces);
+  const showAns = useAppSelector(getShowAns)
 
   const dispatch = useAppDispatch();
   const options = useMemo(() => {
@@ -37,8 +38,9 @@ export const GameOptions = () => {
       {options.map((v, i) => (
         <button
           key={i}
-          onClick={() => dispatch(submitAns(v))}
-          className="z1 option"
+          onClick={() => dispatch(showAnsThunk(v))}
+          className={`z1 option ${showAns ? v === country ? "ans-r" : "ans-w" : ""}`}
+          disabled={showAns}
         >
           {v}
         </button>

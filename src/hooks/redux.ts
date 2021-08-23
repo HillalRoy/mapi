@@ -20,3 +20,12 @@ export const useLocations = () => {
   }, [snapshot, loading, error])
 
 }
+
+export const useHighScore = () => {
+  // const locationCollection = firebase.firestore().collection("locations");
+
+
+  // const [snapshot, loading, error] = useCollection(locationCollection.where("highScore", ""));
+
+
+}

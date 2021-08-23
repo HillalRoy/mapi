@@ -56,20 +56,7 @@
       width: 100px;
     }
   }
-  .game-controls {
-    .options {
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: 300px 300px;
-      justify-content: space-around;
-      button {
-        cursor: pointer;
-        border: none;
-        margin: 3px 20px;
-        padding: 1rem;
-        font-size: 1.3rem;
-        background: lightgreen;
-      }
-    }
-  }
+  // .game-controls {
+  //   // TOBE
+  // }
 }
