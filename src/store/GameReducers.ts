@@ -22,9 +22,11 @@ const initialState: GameState = {
   timeExpire: false,
 };
 
-const getNewPlace = (places: Place[]) =>
-  places[Math.floor(Math.random() * places.length)];
-
+const getNewPlace = (places: Place[]) => {
+  if(places.length > 0)
+    return places[Math.floor(Math.random() * places.length)] 
+  else return { location: { lat: 0, lng: 0 }, country: "" };
+}
 export const loadPlacesThunk = createAsyncThunk("game/setPlaces", async () => {
   const locationCollection = firebase.firestore().collection("locations");
 
