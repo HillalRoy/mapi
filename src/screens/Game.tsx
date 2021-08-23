@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { useTimer } from "react-timer-hook";
 import { GameOptions } from "../components/GameOptions";
 import { StreetView } from "../components/StreetViewer";
 import { APP_NAME } from "../Constants";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { getScore, giveupGame, restartGame } from "../store/GameReducers";
-import { getUsername } from "../store/UserReducers";
+import {
+  getScore,
+  getShowAns,
+  getTimeExpire,
+  giveupGame,
+  restartGame,
+  RESTART_TIMER,
+  timeExpire,
+} from "../store/GameReducers";
+import { getHighScore, getUsername, getUserUid, setNewHighScoreThunk } from "../store/UserReducers";
 import "./game.scss";
 
 const buttonBg = { backgroundImage: "url('/assets/buttonbg.png')" };
@@ -17,6 +26,36 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
 }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const isPause = useAppSelector(getShowAns);
+  const highScore = useAppSelector(getHighScore)
+  const userUid = useAppSelector(getUserUid)
+
+  // const expiryTimestamp = useMemo(() =>  , [])
+
+  const { seconds, minutes, pause, resume, isRunning, restart } = useTimer({
+    expiryTimestamp: new Date().getTime() + 300_000,
+    onExpire: () => {
+      dispatch(timeExpire(null));
+    },
+  });
+
+  useEffect(() => {
+    const listener = () => {
+      restart(new Date().getTime() + 300_000); 
+    };
+
+    document.addEventListener(RESTART_TIMER, listener);
+    return () => document.removeEventListener(RESTART_TIMER, listener);
+  }, [restart]);
+
+  if (isPause && isRunning) {
+    pause();
+  } else if (!isPause && !isRunning) {
+    resume();
+  }
+  if(score > highScore) {
+    dispatch(setNewHighScoreThunk({newHighScore: score, id: userUid}))
+  }
 
   return (
     <>
@@ -27,6 +66,10 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
 
         <div style={statusBg} className="score ibg">
           Score: {score}
+        </div>
+
+        <div style={statusBg} className="score ibg">
+          Time: {minutes}:{seconds.toString().padStart(2, "0")}
         </div>
 
         <button
@@ -40,7 +83,7 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
         <button
           onClick={() => {
             dispatch(giveupGame(null));
-            history.goBack()
+            history.goBack();
           }}
           style={buttonBg}
           className="ibg"
@@ -56,6 +99,48 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   );
 };
 
+const GameOverOverLay = () => {
+  const timeUp = useAppSelector(getTimeExpire);
+
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+
+  const score = useAppSelector(getScore);
+
+  return (
+    <div className={`game-over ${timeUp ? "show" : "hide"}`}>
+      <div className="time-up">Times Up!</div>
+      {/* <div style={{backgroundImage: `url(${process.env.PUBLIC_URL}/assets/clock.png)`}} className="clock"> </div> */}
+      <img
+        className="clock"
+        src={`${process.env.PUBLIC_URL}/assets/new_file.png`}
+        alt=""
+      />
+      <div className="score">Your Score: {score}</div>
+      <div className="buttons">
+        <button
+          onClick={() => {
+            dispatch(restartGame(null));
+          }}
+          style={buttonBg}
+          className="ibg"
+        >
+          Restart
+        </button>
+        <button
+          onClick={() => {
+            dispatch(giveupGame(null));
+            history.goBack();
+          }}
+          style={buttonBg}
+          className="ibg"
+        >
+          Back to Home
+        </button>
+      </div>
+    </div>
+  );
+};
 export const GamePage = () => {
   const username = useAppSelector(getUsername);
   const history = useHistory();
@@ -75,6 +160,9 @@ export const GamePage = () => {
         <div className="game-controls">
           <GameOptions />
         </div>
+      </div>
+      <div className="overlay">
+        <GameOverOverLay />
       </div>
     </section>
   );

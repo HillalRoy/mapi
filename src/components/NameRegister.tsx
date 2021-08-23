@@ -5,14 +5,18 @@ import { getUsername, setUsername } from "../store/UserReducers";
 
 import "./name-register.scss";
 import firebase from "firebase";
+import { startNewGame } from "../store/GameReducers";
 export const NameRegister = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const username = useAppSelector(getUsername);
   const [usernameInputVal, onUsernameChange] = useState("");
   const [errorMsg, setError] = useState("");
-
-  const play = async () => {
+  const play = () => {
+    dispatch(startNewGame(null))
+    history.push("/play");
+  }
+  const onPlay = async () => {
     if (usernameInputVal !== "") {
       try {
         const users = firebase.firestore().collection("users");
@@ -25,18 +29,16 @@ export const NameRegister = () => {
 
           return;
         }
-        const res = await users.add({ username: usernameInputVal });
-        console.log(res);
-
-        dispatch(setUsername(usernameInputVal));
-        history.push("/play");
+        const res = await users.add({ username: usernameInputVal, highScore: 0 });
+        dispatch(setUsername({username:usernameInputVal, uid: res.id}));
+        play();
       } catch (error) {
         setError("Try again");
         console.log({ error });
       }
 
       // play();
-    } else if (username !== "") history.push("/play");
+    } else if (username !== "") play();
   };
 
   return (
@@ -44,7 +46,7 @@ export const NameRegister = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          play();
+          onPlay();
         }}
         action="none"
       >

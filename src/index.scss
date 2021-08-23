@@ -71,6 +71,11 @@ img {
   height: 100%;
   width: 100%;
 }
+button{
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
 
 #pano>div>div:nth-child(1)>div>div:nth-child(11)>div {
   filter: invert(1);

@@ -1,4 +1,10 @@
 import React from "react"
 export const ScoreBord = () => {
-    return <> </>
+
+    
+
+    return <div className="scores">
+
+
+    </div>
 }

@@ -5,4 +5,11 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+    .score{
+        height: 3.28rem;
+        &:first-child{
+            margin-top: 13rem;
+        }
+    }
+
 }

@@ -6,9 +6,10 @@ import { RootState } from "./store";
 type GameState = {
   currentPlace: Place;
   places: Place[];
-  showAns: boolean,
+  showAns: boolean;
   shownPlaces: Place[];
   score: number;
+  timeExpire: boolean;
 };
 
 // Define the initial state using that type
@@ -18,6 +19,7 @@ const initialState: GameState = {
   showAns: false,
   places: [],
   score: 0,
+  timeExpire: false,
 };
 
 const getNewPlace = (places: Place[]) =>
@@ -33,11 +35,14 @@ export const loadPlacesThunk = createAsyncThunk("game/setPlaces", async () => {
   return countryList;
 });
 
-export const showAnsThunk = createAsyncThunk("game/showAns", async (ans: string) => {
-  await sleep(1500)
-  return ans
-});
-
+export const showAnsThunk = createAsyncThunk(
+  "game/showAns",
+  async (ans: string) => {
+    await sleep(1500);
+    return ans;
+  }
+);
+export const RESTART_TIMER = "restart-timer";
 export const gameSlice = createSlice({
   name: "game",
   // `createSlice` will infer the state type from the `initialState` argument
@@ -55,10 +60,12 @@ export const gameSlice = createSlice({
     },
     restartGame: (state, _: PayloadAction<any>) => {
       // Todo time reset
+      document.dispatchEvent(new Event(RESTART_TIMER));
       return {
         ...state,
         currentPlace: getNewPlace(state.places),
         score: 0,
+        timeExpire: false,
       };
     },
     giveupGame: (state, _: PayloadAction<any>) => {
@@ -69,30 +76,51 @@ export const gameSlice = createSlice({
         score: 0,
       };
     },
+
+    startNewGame: (state, _: PayloadAction<any>) => {
+      return {
+        ...state,
+        currentPlace: getNewPlace(state.places),
+        shownPlaces: [],
+        showAns: false,
+        score: 0,
+        timeExpire: false,
+      };
+    },
+    timeExpire: (state, _: PayloadAction<any>) => {
+      // Todo move back to home
+      return {
+        ...state,
+        timeExpire: true,
+      };
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(loadPlacesThunk.fulfilled, (state, { payload: places }) => ({
-      ...state,
-      places,
-      currentPlace: getNewPlace(places),
-    }))
+    builder.addCase(
+      loadPlacesThunk.fulfilled,
+      (state, { payload: places }) => ({
+        ...state,
+        places,
+        currentPlace: getNewPlace(places),
+      })
+    );
 
     builder.addCase(showAnsThunk.fulfilled, (state, { payload: ans }) => ({
       ...state,
       showAns: false,
       currentPlace: getNewPlace(state.places),
       score: ans === state.currentPlace.country ? state.score + 1 : state.score,
-    }))
+    }));
     builder.addCase(showAnsThunk.pending, (state, { payload: ans }) => ({
       ...state,
       showAns: true,
       // currentPlace: getNewPlace(state.places),
       // score: ans === state.currentPlace.country ? state.score + 1 : state.score,
-    }))
-  }
+    }));
+  },
 });
 
-export const { submitAns, restartGame, giveupGame } =
+export const { submitAns, restartGame, giveupGame, timeExpire, startNewGame } =
   gameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
@@ -103,5 +131,5 @@ export const getCurCountry = (state: RootState) =>
 export const getPlaces = (state: RootState) => state.game.places;
 export const getScore = (state: RootState) => state.game.score;
 export const getShowAns = (state: RootState) => state.game.showAns;
-
+export const getTimeExpire = (state: RootState) => state.game.timeExpire;
 export const GameReducer = gameSlice.reducer;
