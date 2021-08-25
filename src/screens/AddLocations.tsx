@@ -39,25 +39,6 @@ export const AddLocations = () => {
   const addLocation = async () => {
     try {
       setError("")
-      const res = await locationCollection
-        .where("country", "==", country)
-        .get();
-      let exist = false;
-      res.forEach((v) => {
-        const p = v.data() as Place;
-        if (
-          Math.round(p.location.lat) === Math.round(lat) &&
-          Math.round(p.location.lng) === Math.round(lng)
-        ) {
-          setError(
-            `alredy exist ${p.location.lat} ${p.location.lng} ${p.country}`
-          );
-          exist = true;
-        }
-      });
-      if (exist) {
-        return;
-      }
       await locationCollection.add({ location: { lat, lng }, country });
     } catch (error) {
       setError(error);
