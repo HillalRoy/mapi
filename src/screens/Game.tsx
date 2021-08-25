@@ -60,15 +60,15 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   return (
     <>
       <div className="stats">
-        <div style={statusBg} className="usrname ibg">
+        <div style={statusBg} className="usrname stats__item ibg">
           {username}
         </div>
 
-        <div style={statusBg} className="score ibg">
+        <div style={statusBg} className="score stats__item ibg">
           Score: {score}
         </div>
 
-        <div style={statusBg} className="score ibg">
+        <div style={statusBg} className="score stats__item ibg">
           Time: {minutes}:{seconds.toString().padStart(2, "0")}
         </div>
 
