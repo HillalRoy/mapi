@@ -13,9 +13,9 @@ export const useLocations = () => {
 
   const [snapshot, loading, error] = useCollection(locationCollection);
   return useMemo(()=> {
-      const countryList: [place: Place, id: number][] = [];
+      const countryList: [place: Place, id: string][] = [];
       snapshot?.forEach((v) => (countryList as any[]).push([v.data(), v.id]));
-      return [countryList, loading, error] as [[place: Place, id: number][], boolean, typeof error]
+      return [countryList, loading, error] as [[place: Place, id: string][], boolean, typeof error]
   }, [snapshot, loading, error])
 
 }

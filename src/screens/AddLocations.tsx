@@ -4,29 +4,37 @@ import { useLocations } from "../hooks/redux";
 import "./screens.scss";
 import "./addLocations.scss";
 
-const Location: FC<{ lat: number; lng: number; country: string, id:number }> = ({
-  lat,
-  lng,
-  country,
-  id
-}) => {
-  return (
-    <div className="location">
-      <div className="lat value">
-        <span id="lat">{lat}</span>
+const Location: FC<{ lat: number; lng: number; country: string; id: string }> =
+  ({ lat, lng, country, id }) => {
+    const locationCollection = firebase.firestore().collection("locations");
+
+    const deleteDoc = () => {
+        const shouldDelete = window.confirm(`Do you want to delete "${lat}, ${lng} of ${country}"?`)
+        if(!shouldDelete) return
+
+        locationCollection.doc(id).delete().then(() => {
+          console.log("Document successfully deleted!");
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
+    }
+    return (
+      <div className="location">
+        <div className="lat value">
+          <span id="lat">{lat}</span>
+        </div>
+        <div className="lng value">
+          <span id="lng">{lng}</span>
+        </div>
+        <div className="country value">
+          <span id="country">{country}</span>
+        </div>
+        <div className="delete value">
+          <button onClick={deleteDoc} id="country">delete</button>
+        </div>
       </div>
-      <div className="lng value">
-        <span id="lng">{lng}</span>
-      </div>
-      <div className="country value">
-        <span id="country">{country}</span>
-      </div>
-      {/* <div className="country value">
-        <span id="country">{country}</span>
-      </div> */}
-    </div>
-  );
-};
+    );
+  };
 
 export const AddLocations = () => {
   const locationCollection = firebase.firestore().collection("locations");
@@ -38,7 +46,7 @@ export const AddLocations = () => {
 
   const addLocation = async () => {
     try {
-      setError("")
+      setError("");
       await locationCollection.add({ location: { lat, lng }, country });
     } catch (error) {
       setError(error);
@@ -61,7 +69,7 @@ export const AddLocations = () => {
         </div>
       </div>
       <form
-      className="locations"
+        className="locations"
         onSubmit={(e) => {
           e.preventDefault();
           addLocation();
@@ -97,8 +105,10 @@ export const AddLocations = () => {
               placeholder="country"
             />
           </div>
+          <div className="add-button value">
+            <button>Add</button>
+          </div>
         </div>
-        <button>Add</button>
         <div className="error">{error}</div>
       </form>
 

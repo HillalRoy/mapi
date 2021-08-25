@@ -29,7 +29,14 @@
       justify-content: center;
       overflow: hidden;
       background-color: #693bce;
+      &.delete,&.add-button {
+        width: 5rem;
+        background: none;
 
+      }
+      button {
+        margin: 0;
+      }
       input{
         border-radius: 0.3rem;
         display: block;
