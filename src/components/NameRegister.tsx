@@ -20,15 +20,6 @@ export const NameRegister = () => {
     if (usernameInputVal !== "") {
       try {
         const users = firebase.firestore().collection("users");
-        const exist = await users
-          .where("username", "==", usernameInputVal)
-          .get();
-        if (!exist.empty) {
-          // exitst
-          setError("Username alredy exist!!");
-
-          return;
-        }
         const res = await users.add({ username: usernameInputVal, highScore: 0 });
         dispatch(setUsername({username:usernameInputVal, uid: res.id}));
         play();
@@ -36,8 +27,6 @@ export const NameRegister = () => {
         setError("Try again");
         console.log({ error });
       }
-
-      // play();
     } else if (username !== "") play();
   };
 

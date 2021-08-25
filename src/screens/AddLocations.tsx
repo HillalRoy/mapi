@@ -4,20 +4,23 @@ import { useLocations } from "../hooks/redux";
 import "./screens.scss";
 import "./addLocations.scss";
 
-const Location: FC<{ lat: number; lng: number; country: string; id: string }> =
-  ({ lat, lng, country, id }) => {
+const Location: FC<{ setError: (a:string) => void, lat: number; lng: number; country: string; id: string }> =
+  ({ setError,  lat, lng, country, id }) => {
     const locationCollection = firebase.firestore().collection("locations");
 
     const deleteDoc = () => {
-        const shouldDelete = window.confirm(`Do you want to delete "${lat}, ${lng} of ${country}"?`)
-        if(!shouldDelete) return
-
-        locationCollection.doc(id).delete().then(() => {
-          console.log("Document successfully deleted!");
-        }).catch((error) => {
+      if (
+        window.confirm(`Do you want to delete "${lat}, ${lng} of ${country}"?`)
+      ) {
+        locationCollection
+          .doc(id)
+          .delete()
+          .catch((error) => {
+            setError("Error removing document: " + error)
             console.error("Error removing document: ", error);
-        });
-    }
+          });
+      }
+    };
     return (
       <div className="location">
         <div className="lat value">
@@ -30,7 +33,9 @@ const Location: FC<{ lat: number; lng: number; country: string; id: string }> =
           <span id="country">{country}</span>
         </div>
         <div className="delete value">
-          <button onClick={deleteDoc} id="country">delete</button>
+          <button onClick={deleteDoc} id="country">
+            delete
+          </button>
         </div>
       </div>
     );
@@ -117,6 +122,7 @@ export const AddLocations = () => {
           .filter((v) => v)
           .map(([v, id], i) => (
             <Location
+            setError={setError}
               key={v.country + i}
               lat={v.location.lat}
               lng={v.location.lng}

@@ -1,15 +1,22 @@
 #leadboad {
-    width: 360px;
-    height: 370px;
-    margin: 1rem auto;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    .score{
-        height: 3.28rem;
-        &:first-child{
-            margin-top: 13rem;
-        }
-    }
+    --background: #eef773;
+    --border: #f4e34a;
+    background-color: var(--background);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 5px solid #000;
+    margin: 1rem 1rem 1rem 1rem; 
+    height: fit-content;
 
+    .score, .username{
+        &.heading{
+            border-bottom: 5px solid #000;
+            font-size: 1.5rem;
+        }
+        padding: 0.51rem 2.1rem;
+        border-bottom: 5px solid var(--border);
+    }
+    .score{
+        border-left: 5px solid #000;
+    }
 }
