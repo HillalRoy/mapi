@@ -5,9 +5,14 @@ import { NameRegister } from "../components/NameRegister";
 import { Leadboad } from "../components/Leadboad";
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "../store/Firebase";
+import { audioEngine } from "../audios/audioEngine";
+
 const Header = () => {
   const [user, loading, error] = useAuthState(auth)
-  const logout = () =>  auth.signOut()
+  const logout = () =>  {
+    auth.signOut()
+    audioEngine.allStop()
+  }
   
   return (
     <div className="hedding">

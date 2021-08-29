@@ -7,9 +7,11 @@ import { startNewGame } from "../store/GameReducers";
 import { auth } from "../store/Firebase";
 import BtnGoogleLignt from "../img/btn_google_light.svg";
 import { useAuthState } from "react-firebase-hooks/auth"
+import { audioEngine } from "../audios/audioEngine";
 const GoogleLoginBtn = () => {
 
   const googleLogin = async () => {
+    audioEngine.firstUserInteraction()
     try {
       const provider = new firebase.auth.GoogleAuthProvider();
       await auth.signInWithPopup(provider);
@@ -39,7 +41,7 @@ export const NameRegister = () => {
   return <div id="name-register">
       {user !== null ? <div>
           <div className="name">{user?.displayName}</div>
-          <button className="play btn">Ready to Play</button>
+          <button onClick={play} className="play btn">Ready to Play</button>
       </div> : <GoogleLoginBtn/>}
       {error && <div className="error"> {error.message} </div>}
   </div>;

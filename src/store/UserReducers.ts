@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import firebase from "firebase";
+import { audioEngine } from "../audios/audioEngine";
 
 interface UserState {
   username: string;
@@ -21,11 +22,13 @@ export const setNewHighScoreThunk = createAsyncThunk(
     const db = firebase.firestore();
     const users = db.collection("users");
     const sfDocRef = users.doc(id);
+    
 
     try {
-      await db.runTransaction(async (transaction) => {
-        return await transaction.update(sfDocRef, { highScore: newHighScore });
-      });
+      await users.doc(id).set({ highScore: newHighScore }, {merge: true});
+      // await db.runTransaction(async (transaction) => {
+      //   return await transaction.set(sfDocRef, { highScore: newHighScore }, {merge: true});
+      // });
 
       return newHighScore;
     } catch (e) {
@@ -43,6 +46,10 @@ export const usersSlice = createSlice({
       state,
       action: PayloadAction<{ username: string; uid: string }>
     ) => {
+      audioEngine.play(audioEngine.bgmusic)
+      setTimeout(() => {
+        audioEngine.play(audioEngine.introspeech)
+      }, 1000);
       return {
         ...state,
         username: action.payload.username,

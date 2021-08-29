@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router-dom";
 import { useTimer } from "react-timer-hook";
 import { GameOptions } from "../components/GameOptions";
 import { StreetView } from "../components/StreetViewer";
 import { APP_NAME } from "../Constants";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { auth } from "../store/Firebase";
 import {
   getScore,
   getShowAns,
@@ -144,8 +146,8 @@ const GameOverOverLay = () => {
 export const GamePage = () => {
   const username = useAppSelector(getUsername);
   const history = useHistory();
-
-  if (username === "") history.replace("/");
+  const [user, loding, error] = useAuthState(auth)
+  if (user === null) history.replace("/");
   const score = useAppSelector(getScore);
 
   return (
