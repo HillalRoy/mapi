@@ -1,24 +1,33 @@
 @import "./screens.scss";
 
-
-#home{
+#home {
+  display: grid;
+  background-size: cover;
+  .hedding {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .user .logout button.btn {
+      margin: 3rem;
+      padding: 0.5rem 2rem;
+      color: white;
+      background-color: #2181f2;
+    }
+    .hedding__middle {
+      color: wheat;
+      #jis-logo {
+        margin: auto;
+      }
+      #app-title {
+        font-size: 4rem;
+      }
+      #slogan {
+        font-size: 1.3rem;
+      }
+    }
+  }
+  .bottom {
     display: grid;
-    background-size: cover;
-    .hedding{
-        color: wheat;
-        #jis-logo{
-            margin: auto;
-        }
-        #app-title{
-            font-size: 4rem;
-         
-        }
-        #slogan{
-            font-size: 1.3rem;
-        }
-    }
-    .bottom{
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
+    grid-template-columns: 1fr 1fr;
+  }
 }

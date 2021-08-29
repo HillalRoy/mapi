@@ -3,7 +3,32 @@
   align-items: center;
   text-align: center;
   justify-content: center;
+  .name{
+    background-color: wheat;
+    padding: 0.5rem;
+  }
+  .btn.play{
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    background: #45E096;
+    padding: 1rem 3rem ;
+    border-radius: 0.5rem;
+    // box-shadow: 0px 1px 5px 5px #2ec27a;
+    transition: box-shadow 300ms ease;
+    &:hover{
+      box-shadow: 0px 0px 5px 5px #32c77f;
 
+    }
+  }
+
+  .g-login{
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    img{
+      padding: 0;
+    }
+  }
   form {
     display: grid;
     place-items: center;
