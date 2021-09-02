@@ -1,11 +1,14 @@
 import { auth } from "../store/Firebase"
 import { store } from "../store/store"
-import { setUsername } from "../store/UserReducers"
+import { setUser } from "../store/UserReducers"
 
 auth.onAuthStateChanged((usr) => {
   if(!usr) return
-  store.dispatch(setUsername({
+
+  
+
+  store.dispatch(setUser({
     username: usr.displayName ?? "",
-    uid: usr.uid
+    uid: usr.uid,
   })) 
 })

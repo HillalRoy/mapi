@@ -24,6 +24,9 @@ const setStreetVIew = async (fenway: { lat: number; lng: number }) => {
         },
       }
     );
+    panorama.setOptions({
+      showRoadLabels: false
+    })
     map.setStreetView(panorama);
   } catch (err) {
     console.log({ err });

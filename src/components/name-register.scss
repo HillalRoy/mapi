@@ -21,10 +21,13 @@
     }
   }
 
-  .g-login{
+  .login-btn{
+    width: 100%;
+    text-align: center;
     display: flex;
     align-items: center;
     padding: 0.5rem 2rem;
+    margin: 0.1rem;
     img{
       padding: 0;
     }

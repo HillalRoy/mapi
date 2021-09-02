@@ -5,6 +5,11 @@ class AudioEngine {
     "/assets/In Game Voices/Intro Speech/Intro Speech.mp3"
   );
   silent = new Audio("/assets/silent.mp3");
+  
+  startButtonspeech: HTMLAudioElement[]=[new Audio("/assets/In Game Voices/Start Button Speech/All the best.mp3"), 
+  new Audio("/assets/In Game Voices/Start Button Speech/Good Luck.mp3"), 
+  new Audio("/assets/In Game Voices/Start Button Speech/Let's Go.mp3")];
+
   isbgMusicplaying = false;
   currentPlayingspeech?: HTMLAudioElement;
 

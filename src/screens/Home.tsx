@@ -8,7 +8,7 @@ import { auth } from "../store/Firebase";
 import { audioEngine } from "../audios/audioEngine";
 
 const Header = () => {
-  const [user, loading, error] = useAuthState(auth)
+  const [user] = useAuthState(auth)
   const logout = () =>  {
     auth.signOut()
     audioEngine.allStop()

@@ -56,7 +56,7 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
     resume();
   }
   if(score > highScore) {
-    dispatch(setNewHighScoreThunk({newHighScore: score, id: userUid}))
+    dispatch(setNewHighScoreThunk({newHighScore: score, id: userUid, username}))
   }
 
   return (
@@ -146,8 +146,10 @@ const GameOverOverLay = () => {
 export const GamePage = () => {
   const username = useAppSelector(getUsername);
   const history = useHistory();
-  const [user, loding, error] = useAuthState(auth)
+  const [user] = useAuthState(auth)
   if (user === null) history.replace("/");
+  if (username === "") history.replace("/");
+
   const score = useAppSelector(getScore);
 
   return (
