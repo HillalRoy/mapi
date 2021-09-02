@@ -7,12 +7,22 @@ import firebase from "firebase";
 const LeadboadEntry: FC<{v:{
   username: string;
   highScore: number;
-}}> = ({v}) => {
-  return         <>
-  <div key={v.username} className="username">{v.username}</div>
+}, index: number}> = ({v, index}) => {
+  let maddel = " "
+  if(index === 0) {
+    maddel = "🥇"
+  } else  if(index === 1) {
+    maddel = "🥈"
+  }  else  if(index === 2) {
+    maddel = "🥉"
+  }
 
-  <div key={v.highScore} className="score">{v.highScore}</div>
-</>
+  return         <tr>
+  <td> #{index +1} {maddel}</td>
+  <td key={v.username} className="username">{v.username}</td>
+
+  <td key={v.highScore} className="score">{v.highScore}</td>
+</tr>
 }
 
 export const Leadboad = () => {
@@ -22,18 +32,25 @@ export const Leadboad = () => {
       .collection("users")
       .where("highScore", ">", 0)
       .orderBy("highScore", "desc")
-      .limit(4)
+      .limit(5)
   );
 
 
   
   return (
     <div id="leadboad">
-      <div className="username heading">Username</div>
-      <div className="score heading">Score</div>
-      {snapshot?.map((v) => (
-          <LeadboadEntry v={v} key={v.username}/>
+      <div className="title heading">LeaderBoard</div>
+      <table>
+        <tr>
+        <th className="rank heading">#</th>
+
+        <th className="username heading">Username</th>
+        <th className="score heading">Score</th>
+      </tr>
+      {snapshot?.map((v, i) => (
+        <LeadboadEntry v={v} index={i} key={v.username}/>
       ))}
+      </table>
     </div>
   );
 };

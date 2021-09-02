@@ -1,5 +1,15 @@
 @import "./screens.scss";
 
+@keyframes headignColor {
+
+  50%{
+    color: white;
+  }
+  0%, 100%{
+    color: #2e48f5;
+  }
+}
+
 #home {
   display: grid;
   background-size: cover;
@@ -7,14 +17,23 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
+    .menu {
+      width: 100px;
+      height: 2px;
+    }
     .user .logout button.btn {
       margin: 3rem;
       padding: 0.5rem 2rem;
       color: white;
       background-color: #2181f2;
     }
+    .placeholder {
+      width: 100px;
+      height: 2px;
+    }
     .hedding__middle {
-      color: wheat;
+      color: white;
+      animation: headignColor 1000ms ease-in-out infinite;
       #jis-logo {
         margin: auto;
       }
@@ -28,6 +47,7 @@
   }
   .bottom {
     display: grid;
+    margin: 0 10rem;
     grid-template-columns: 1fr 1fr;
   }
 }

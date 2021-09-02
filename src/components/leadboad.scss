@@ -1,22 +1,40 @@
 #leadboad {
-    --background: #eef773;
-    --border: #f4e34a;
-    background-color: var(--background);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border: 5px solid #000;
-    margin: 1rem 1rem 1rem 1rem; 
-    height: fit-content;
+  width: fit-content;
+  border: 5px solid #fff;
+  margin: 1rem 1rem 1rem 1rem;
+  height: fit-content;
+  .heading {
+    font-size: 1.2rem;
+    padding: 0.51rem 2.1rem;
+  }
+  .title {
+    background-color: #323c79;
+    color: white;
+  }
+  table {
+    text-align: left;
+    background-color: white;
+    tr {
+      height: 2.5rem;
+    }
+    td {
+      padding: 0.6rem;
+    }
+    th, td {
+        border: 1px solid black;
+      }
+    td:nth-child(3) {
+      text-align: center;
+    }
+    th:nth-child(2) {
+      padding: 0 4.5rem;
+    }
 
-    .score, .username{
-        &.heading{
-            border-bottom: 5px solid #000;
-            font-size: 1.5rem;
-        }
-        padding: 0.51rem 2.1rem;
-        border-bottom: 5px solid var(--border);
+    tr:nth-child(even) {
+      background-color: #deeaf6;
     }
-    .score{
-        border-left: 5px solid #000;
+    tr:nth-child(odd) {
+      background-color: #ffffff;
     }
+  }
 }

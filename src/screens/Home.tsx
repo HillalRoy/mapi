@@ -27,6 +27,7 @@ const Header = () => {
       <div className="user">
         <div className="logout">
           { user && <button onClick={logout} className="btn">Logout</button> }
+          <div className="placeholder"></div>
         </div>
       </div>
     </div>

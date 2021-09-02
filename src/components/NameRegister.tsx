@@ -61,7 +61,8 @@ export const NameRegister = () => {
     }
 
     dispatch(setUsername({username: nickName}))
-    play()
+    // play()
+    // play()
   }
 
   if(loading){
@@ -84,7 +85,7 @@ export const NameRegister = () => {
             </>
           ) : (
             <>
-              <div className="name">{user?.displayName}</div>
+              <div className="name">Hi! {user?.displayName}</div>
               <button onClick={play} className="play btn">
                 Ready to Play
               </button>
