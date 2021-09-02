@@ -10,6 +10,7 @@ import { audioEngine } from "../audios/audioEngine";
 const Header = () => {
   const [user] = useAuthState(auth)
   const logout = () =>  {
+    audioEngine.play(audioEngine.onClick)
     auth.signOut()
     audioEngine.allStop()
   }

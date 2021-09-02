@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router-dom";
 import { useTimer } from "react-timer-hook";
+import { audioEngine } from "../audios/audioEngine";
 import { GameOptions } from "../components/GameOptions";
 import { StreetView } from "../components/StreetViewer";
 import { APP_NAME } from "../Constants";
@@ -75,7 +76,8 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
         </div>
 
         <button
-          onClick={() => dispatch(restartGame(null))}
+          onClick={() => {dispatch(restartGame(null));
+            audioEngine.play(audioEngine.onClick) }}
           style={buttonBg}
           className="ibg"
         >
@@ -85,6 +87,7 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
         <button
           onClick={() => {
             dispatch(giveupGame(null));
+            audioEngine.play(audioEngine.onClick)
             history.goBack();
           }}
           style={buttonBg}

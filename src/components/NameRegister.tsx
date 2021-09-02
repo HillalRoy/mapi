@@ -50,6 +50,7 @@ export const NameRegister = () => {
   const [user, loading, error] = useAuthState(auth);
   const play = () => {
     dispatch(startNewGame(null));
+    audioEngine.play(audioEngine.onClick)
     history.push("/play");
   };
   

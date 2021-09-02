@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import firebase from "firebase";
+import { audioEngine } from "../audios/audioEngine";
 import { sleep } from "../utils/tools";
 import { RootState } from "./store";
 
@@ -52,12 +53,14 @@ export const gameSlice = createSlice({
   reducers: {
     submitAns: (state, { payload: ans }: PayloadAction<string>) => {
       if (ans === state.currentPlace.country) {
+        audioEngine.play(audioEngine.onClick)
         return {
           ...state,
           currentPlace: getNewPlace(state.places),
           score: state.score + 1,
         };
       }
+      audioEngine.play(audioEngine.wrongClick)
       return { ...state, currentPlace: getNewPlace(state.places) };
     },
     restartGame: (state, _: PayloadAction<any>) => {
