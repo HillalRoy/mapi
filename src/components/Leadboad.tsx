@@ -48,7 +48,7 @@ export const Leadboad = () => {
         <th className="score heading">Score</th>
       </tr>
       {snapshot?.map((v, i) => (
-        <LeadboadEntry v={v} index={i} key={v.username}/>
+        <LeadboadEntry v={v} index={i} key={v.username + i}/>
       ))}
       </table>
     </div>

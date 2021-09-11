@@ -1,19 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { loadGMaps } from "../gapi/loadGMap";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { getCurCoordinates, loadPlacesThunk } from "../store/GameReducers";
+import { getCurCoordinates, loadPlacesThunk, updateLoacation } from "../store/GameReducers";
 
 const setStreetVIew = async (fenway: { lat: number; lng: number }) => {
   try {
     const google = await loadGMaps();
-    const map = new google.maps.Map(
-      document.getElementById("map") as HTMLElement,
-      {
-        center: fenway,
-        zoom: 14,
-      }
-    );
-
     const panorama = new google.maps.StreetViewPanorama(
       document.getElementById("pano") as HTMLElement,
       {
@@ -25,27 +17,82 @@ const setStreetVIew = async (fenway: { lat: number; lng: number }) => {
       }
     );
     panorama.setOptions({
-      showRoadLabels: false
-    })
-    map.setStreetView(panorama);
+      showRoadLabels: false,
+    });
   } catch (err) {
     console.log({ err });
   }
 };
 
-export const StreetView = () => {
-  const coordinates = useAppSelector(getCurCoordinates);
-  const dispatch = useAppDispatch();
-  if (coordinates.lat + coordinates.lng === 0) {
-    console.log("sendt");
-
-    dispatch(loadPlacesThunk());
-  }
+const useStreetView = (coordinates: {
+  lat: number;
+  lng: number;
+}): [google.maps.StreetViewPanorama | undefined, boolean, unknown] => {
+  const [p, setP] = useState<google.maps.StreetViewPanorama>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<unknown>();
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (coordinates.lat + coordinates.lng === 0) {
-    } else setStreetVIew(coordinates);
-  }, [coordinates]);
+    loadGMaps()
+      .then((google) => {
+        try {
+          const panorama = new google.maps.StreetViewPanorama(
+            document.getElementById("pano") as HTMLElement,
+            {
+              position: { lat: 37.86926, lng: -122.254811 },
+              pov: {
+                heading: 34,
+                pitch: 10,
+              },
+              showRoadLabels: false,
+            }
+          );
+          setP(panorama);
+          // panorama.setPosition()
+          setLoading(false);
+        } catch (err) {
+          setError(err);
+          setLoading(false);
+        }
+      })
+      .catch((error) => setError(error));
+  }, []);
+
+  useEffect(() => {
+    setLoading(true)
+    loadGMaps().then(async (google) => {
+      const sv = new google.maps.StreetViewService();
+      p?.setVisible(false);
+      try{
+        const { data } = await sv.getPanorama({ location: coordinates, radius: 50 })
+        const location = data.location!;
+        p?.setPano(location.pano as string);
+        p?.setVisible(true);
+        setLoading(false)
+      }catch(err) {
+        dispatch(updateLoacation())
+      }
+
+    });
+  }, [coordinates, dispatch, error, p]);
+
+  return [p, loading, error];
+};
+
+export const StreetView = () => {
+  const coordinates = useAppSelector(getCurCoordinates);
+  const placesState = useAppSelector((s) => s.game.placesState);
+
+  const dispatch = useAppDispatch();
+  if (placesState === "empty") {
+    dispatch(loadPlacesThunk());
+  }
+  useStreetView(coordinates);
+  // useEffect(() => {
+  //   if (coordinates.lat + coordinates.lng === 0) {
+  //   } else setStreetVIew(coordinates);
+  // }, [coordinates]);
 
   return (
     <>

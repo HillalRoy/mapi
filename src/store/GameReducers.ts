@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import firebase from "firebase";
 import { audioEngine } from "../audios/audioEngine";
-import { sleep } from "../utils/tools";
+import { random, sleep } from "../utils/tools";
 import { RootState } from "./store";
 
 type GameState = {
   currentPlace: Place;
   places: Place[];
+  placesState: "loading" | "loaded" | "empty",
   showAns: boolean;
   shownPlaces: Place[];
   score: number;
@@ -17,6 +17,7 @@ type GameState = {
 const initialState: GameState = {
   currentPlace: { location: { lat: 0, lng: 0 }, country: "" },
   shownPlaces: [],
+  placesState: "empty",
   showAns: false,
   places: [],
   score: 0,
@@ -28,14 +29,19 @@ const getNewPlace = (places: Place[]) => {
     return places[Math.floor(Math.random() * places.length)] 
   else return { location: { lat: 0, lng: 0 }, country: "" };
 }
+
+
 export const loadPlacesThunk = createAsyncThunk("game/setPlaces", async () => {
-  const locationCollection = firebase.firestore().collection("locations");
+  // const locationCollection = firebase.firestore().collection("locations");
 
-  const places = await locationCollection.get();
-  const countryList: Place[] = [];
-  places.forEach((v) => (countryList as any[]).push(v.data()));
+  // const places = await locationCollection.get();
+  const reqs = Array(5).fill(0).map(c=> fetch(`/assets/loc/loc-${random(409)}.json`).then(v=> v.json()));
+  const ress = await Promise.all(reqs) as Place[][]
+  const places = ress.flat()
+  console.log(places);
+  return places
+  // places.forEach((v) => (countryList as any[]).push(v.data()));
 
-  return countryList;
 });
 
 export const showAnsThunk = createAsyncThunk(
@@ -51,6 +57,7 @@ export const gameSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
+    updateLoacation: (state) => ({...state, currentPlace: getNewPlace(state.places)}),
     submitAns: (state, { payload: ans }: PayloadAction<string>) => {
       if (ans === state.currentPlace.country) {
         audioEngine.play(audioEngine.onClick)
@@ -107,8 +114,21 @@ export const gameSlice = createSlice({
         ...state,
         places,
         currentPlace: getNewPlace(places),
+        placesState: "loaded",
+
       })
     );
+
+    builder.addCase(loadPlacesThunk.pending, (state) => ({
+      ...state,
+      placesState: "loading",
+    }));
+
+    builder.addCase(loadPlacesThunk.rejected, (state) => ({
+      ...state,
+      placesState: "empty",
+    }));
+
 
     builder.addCase(showAnsThunk.fulfilled, (state, { payload: ans }) => ({
       ...state,
@@ -116,6 +136,7 @@ export const gameSlice = createSlice({
       currentPlace: getNewPlace(state.places),
       score: ans === state.currentPlace.country ? state.score + 1 : state.score,
     }));
+
     builder.addCase(showAnsThunk.pending, (state, { payload: ans }) => ({
       ...state,
       showAns: true,
@@ -125,7 +146,7 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { submitAns, restartGame, giveupGame, timeExpire, startNewGame } =
+export const { submitAns, restartGame, giveupGame, timeExpire, startNewGame, updateLoacation } =
   gameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
