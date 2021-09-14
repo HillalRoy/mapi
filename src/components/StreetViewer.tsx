@@ -3,26 +3,6 @@ import { loadGMaps } from "../gapi/loadGMap";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { getCurCoordinates, loadPlacesThunk, updateLoacation } from "../store/GameReducers";
 
-const setStreetVIew = async (fenway: { lat: number; lng: number }) => {
-  try {
-    const google = await loadGMaps();
-    const panorama = new google.maps.StreetViewPanorama(
-      document.getElementById("pano") as HTMLElement,
-      {
-        position: fenway,
-        pov: {
-          heading: 34,
-          pitch: 10,
-        },
-      }
-    );
-    panorama.setOptions({
-      showRoadLabels: false,
-    });
-  } catch (err) {
-    console.log({ err });
-  }
-};
 
 const useStreetView = (coordinates: {
   lat: number;
@@ -89,10 +69,6 @@ export const StreetView = () => {
     dispatch(loadPlacesThunk());
   }
   useStreetView(coordinates);
-  // useEffect(() => {
-  //   if (coordinates.lat + coordinates.lng === 0) {
-  //   } else setStreetVIew(coordinates);
-  // }, [coordinates]);
 
   return (
     <>
