@@ -1,23 +1,34 @@
 import React, { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router-dom";
-import { useTimer } from "react-timer-hook";
 import { audioEngine } from "../audios/audioEngine";
 import { GameOptions } from "../components/GameOptions";
+import { Hints } from "../components/Hints";
 import { StreetView } from "../components/StreetViewer";
 import { APP_NAME } from "../Constants";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { useTimer } from "../hooks/timer";
 import { auth } from "../store/Firebase";
 import {
+  getCurCountry,
+  getCurCountryCode,
+  getPlaces,
   getScore,
   getShowAns,
-  getTimeExpire,
+  getShowHints,
   giveupGame,
   restartGame,
   RESTART_TIMER,
-  timeExpire,
+  showHints,
+  submitAns,
 } from "../store/GameReducers";
-import { getHighScore, getUsername, getUserUid, setNewHighScoreThunk } from "../store/UserReducers";
+import {
+  getHighScore,
+  getUsername,
+  getUserUid,
+  setNewHighScoreThunk,
+} from "../store/UserReducers";
+import { Time } from "../utils/Timer";
 import "./game.scss";
 
 const buttonBg = { backgroundImage: "url('/assets/buttonbg.png')" };
@@ -30,21 +41,24 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   const dispatch = useAppDispatch();
   const history = useHistory();
   const isPause = useAppSelector(getShowAns);
-  const highScore = useAppSelector(getHighScore)
-  const userUid = useAppSelector(getUserUid)
+  const highScore = useAppSelector(getHighScore);
+  const userUid = useAppSelector(getUserUid);
 
   // const expiryTimestamp = useMemo(() =>  , [])
 
   const { seconds, minutes, pause, resume, isRunning, restart } = useTimer({
-    expiryTimestamp: new Date().getTime() + 300_000,
+    // expiryTimestamp: new Date().getTime() + 300_000,
+    expiryTimestamp: Time.seconds(30),
+
     onExpire: () => {
-      dispatch(timeExpire(null));
+      console.log("blank");
+      
+      dispatch(submitAns(''));
     },
   });
-
   useEffect(() => {
     const listener = () => {
-      restart(new Date().getTime() + 300_000); 
+      // restart(new Date().getTime() + 300_000);
     };
 
     document.addEventListener(RESTART_TIMER, listener);
@@ -56,8 +70,10 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   } else if (!isPause && !isRunning) {
     resume();
   }
-  if(score > highScore) {
-    dispatch(setNewHighScoreThunk({newHighScore: score, id: userUid, username}))
+  if (score > highScore) {
+    dispatch(
+      setNewHighScoreThunk({ newHighScore: score, id: userUid, username })
+    );
   }
 
   return (
@@ -76,8 +92,10 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
         </div>
 
         <button
-          onClick={() => {dispatch(restartGame(null));
-            audioEngine.play(audioEngine.onClick) }}
+          onClick={() => {
+            dispatch(restartGame(null));
+            audioEngine.play(audioEngine.onClick);
+          }}
           style={buttonBg}
           className="ibg"
         >
@@ -87,7 +105,7 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
         <button
           onClick={() => {
             dispatch(giveupGame(null));
-            audioEngine.play(audioEngine.onClick)
+            audioEngine.play(audioEngine.onClick);
             history.goBack();
           }}
           style={buttonBg}
@@ -99,49 +117,25 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
       <div className="title z1"> {APP_NAME} </div>
       <div className="logo z1">
         <img src={`${process.env.PUBLIC_URL}/assets/jis.png`} alt="" />
+        <Hints/>
       </div>
     </>
   );
 };
 
 const GameOverOverLay = () => {
-  const timeUp = useAppSelector(getTimeExpire);
-
-  const dispatch = useAppDispatch();
-  const history = useHistory();
-
-  const score = useAppSelector(getScore);
-
+  const showHint = useAppSelector(getShowHints);
+  const dispatch = useAppDispatch()
+  const place = useAppSelector(getCurCountryCode)
   return (
-    <div className={`game-over ${timeUp ? "show" : "hide"}`}>
-      <div className="time-up">Times Up!</div>
-      {/* <div style={{backgroundImage: `url(${process.env.PUBLIC_URL}/assets/clock.png)`}} className="clock"> </div> */}
-      <img
-        className="clock"
-        src={`${process.env.PUBLIC_URL}/assets/new_file.png`}
-        alt=""
-      />
-      <div className="score">Your Score: {score}</div>
-      <div className="buttons">
-        <button
-          onClick={() => {
-            dispatch(restartGame(null));
-          }}
-          style={buttonBg}
-          className="ibg"
-        >
-          Restart
-        </button>
-        <button
-          onClick={() => {
-            dispatch(giveupGame(null));
-            history.goBack();
-          }}
-          style={buttonBg}
-          className="ibg"
-        >
-          Back to Home
-        </button>
+    <div
+      onClick={() => dispatch(showHints(false))}
+     className={`game-over ${showHint ? "show" : "hide"}`}>
+
+      <div style={{ width: "35%", backgroundColor: "#663036", padding: "2rem"}}  className="card">
+          <img style={{
+            width: "100%"
+          }} src={`/assets/map/${place.toLocaleLowerCase()}/vector.svg`} alt="" />
       </div>
     </div>
   );
@@ -149,7 +143,7 @@ const GameOverOverLay = () => {
 export const GamePage = () => {
   const username = useAppSelector(getUsername);
   const history = useHistory();
-  const [user] = useAuthState(auth)
+  const [user] = useAuthState(auth);
   if (user === null) history.replace("/");
   if (username === "") history.replace("/");
 

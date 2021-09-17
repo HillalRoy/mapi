@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { loadGMaps } from "../gapi/loadGMap";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { getCurCoordinates, loadPlacesThunk, updateLoacation } from "../store/GameReducers";
+import { getCurCoordinates, loadPlacesThunk, RESTART_TIMER, updateLoacation } from "../store/GameReducers";
 
 
 const useStreetView = (coordinates: {
@@ -47,8 +47,11 @@ const useStreetView = (coordinates: {
       try{
         const { data } = await sv.getPanorama({ location: coordinates, radius: 50 })
         const location = data.location!;
+        p?.setPov({ heading: 34, pitch: 10})
+        p?.setZoom(0)
         p?.setPano(location.pano as string);
         p?.setVisible(true);
+        document.dispatchEvent(new Event(RESTART_TIMER))
         setLoading(false)
       }catch(err) {
         dispatch(updateLoacation())

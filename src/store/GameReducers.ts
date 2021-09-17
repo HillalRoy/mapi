@@ -10,24 +10,24 @@ type GameState = {
   showAns: boolean;
   shownPlaces: Place[];
   score: number;
-  timeExpire: boolean;
+  showHints: boolean;
 };
 
 // Define the initial state using that type
 const initialState: GameState = {
-  currentPlace: { location: { lat: 0, lng: 0 }, country: "" },
+  currentPlace: { location: { lat: 0, lng: 0 }, code: "", country: "" },
   shownPlaces: [],
   placesState: "empty",
   showAns: false,
   places: [],
   score: 0,
-  timeExpire: false,
+  showHints: false,
 };
 
-const getNewPlace = (places: Place[]) => {
+const getNewPlace = (places: Place[]): Place => {
   if(places.length > 0)
     return places[Math.floor(Math.random() * places.length)] 
-  else return { location: { lat: 0, lng: 0 }, country: "" };
+  else return { location: { lat: 0, lng: 0 }, code: "", country: "" };
 }
 
 
@@ -35,7 +35,7 @@ export const loadPlacesThunk = createAsyncThunk("game/setPlaces", async () => {
   // const locationCollection = firebase.firestore().collection("locations");
 
   // const places = await locationCollection.get();
-  const reqs = Array(5).fill(0).map(c=> fetch(`/assets/loc/loc-${random(409)}.json`).then(v=> v.json()));
+  const reqs = Array(10).fill(0).map(c=> fetch(`/assets/loc/loc-${random(409)}.json`).then(v=> v.json()));
   const ress = await Promise.all(reqs) as Place[][]
   const places = ress.flat()
   console.log(places);
@@ -77,7 +77,6 @@ export const gameSlice = createSlice({
         ...state,
         currentPlace: getNewPlace(state.places),
         score: 0,
-        timeExpire: false,
       };
     },
     giveupGame: (state, _: PayloadAction<any>) => {
@@ -96,14 +95,13 @@ export const gameSlice = createSlice({
         shownPlaces: [],
         showAns: false,
         score: 0,
-        timeExpire: false,
       };
     },
-    timeExpire: (state, _: PayloadAction<any>) => {
+    showHints: (state, {payload: show}: PayloadAction<boolean>) => {
       // Todo move back to home
       return {
         ...state,
-        timeExpire: true,
+        showHints: show
       };
     },
   },
@@ -146,7 +144,7 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { submitAns, restartGame, giveupGame, timeExpire, startNewGame, updateLoacation } =
+export const { submitAns, restartGame, giveupGame, showHints, startNewGame, updateLoacation } =
   gameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
@@ -154,8 +152,10 @@ export const getCurCoordinates = (state: RootState) =>
   state.game.currentPlace.location;
 export const getCurCountry = (state: RootState) =>
   state.game.currentPlace.country;
+  export const getCurCountryCode = (state: RootState) =>
+  state.game.currentPlace.code;
 export const getPlaces = (state: RootState) => state.game.places;
 export const getScore = (state: RootState) => state.game.score;
 export const getShowAns = (state: RootState) => state.game.showAns;
-export const getTimeExpire = (state: RootState) => state.game.timeExpire;
+export const getShowHints = (state: RootState) => state.game.showHints;
 export const GameReducer = gameSlice.reducer;

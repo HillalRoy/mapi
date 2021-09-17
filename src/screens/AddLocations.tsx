@@ -54,7 +54,7 @@ export const AddLocations = () => {
       setError("");
       await locationCollection.add({ location: { lat, lng }, country });
     } catch (error) {
-      setError(error);
+      // setError(error);
       console.log({ error });
     }
   };
