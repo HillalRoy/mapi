@@ -58,7 +58,7 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   });
   useEffect(() => {
     const listener = () => {
-      // restart(new Date().getTime() + 300_000);
+      restart();
     };
 
     document.addEventListener(RESTART_TIMER, listener);

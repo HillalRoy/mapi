@@ -24,6 +24,8 @@ export const useTimer = ({
     useMemo(() => new Timer(expire), [expire])
   );
   const resetTimer = () => {
+    console.log(`resetTimer`);
+    
     setTimer(new Timer(expire));
     setCompleted(false);
   };
@@ -58,6 +60,8 @@ export const useTimer = ({
     resume: () => timer.resume(),
     isRunning: true,
     restart: () => {
+    console.log(`restart`);
+
       resetTimer();
     }, // TODO
   };
