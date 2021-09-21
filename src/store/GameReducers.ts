@@ -47,7 +47,7 @@ export const loadPlacesThunk = createAsyncThunk("game/setPlaces", async () => {
 export const showAnsThunk = createAsyncThunk(
   "game/showAns",
   async (ans: string) => {
-    await sleep(1500);
+    await sleep(2000);
     return ans;
   }
 );

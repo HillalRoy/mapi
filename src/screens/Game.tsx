@@ -19,6 +19,7 @@ import {
   giveupGame,
   restartGame,
   RESTART_TIMER,
+  showAnsThunk,
   showHints,
   submitAns,
 } from "../store/GameReducers";
@@ -48,12 +49,10 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
 
   const { seconds, minutes, pause, resume, isRunning, restart } = useTimer({
     // expiryTimestamp: new Date().getTime() + 300_000,
-    expiryTimestamp: Time.seconds(30),
+    expiryTimestamp: Time.minutes(2),
 
     onExpire: () => {
-      console.log("blank");
-      
-      dispatch(submitAns(''));
+      dispatch(showAnsThunk(''));
     },
   });
   useEffect(() => {

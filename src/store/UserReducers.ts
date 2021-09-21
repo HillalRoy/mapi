@@ -31,6 +31,7 @@ export const setNewHighScoreThunk = createAsyncThunk(
     const sfDocRef = users.doc(id);
 
     try {
+      // TODO
       await sfDocRef.set(
         { username, highScore: newHighScore },
         { merge: true }
