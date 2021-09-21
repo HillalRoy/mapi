@@ -1,10 +1,3 @@
-// const { seconds, minutes, pause, resume, isRunning, restart } = useTimer({
-//   expiryTimestamp: new Date().getTime() + 300_000,
-//   onExpire: () => {
-//     dispatch(timeExpire(null));
-//   },
-// });
-
 import React, { useEffect, useMemo, useState } from "react";
 import { Time, Timer } from "../utils/Timer";
 
@@ -15,7 +8,7 @@ export const useTimer = ({
   expiryTimestamp: number | Time;
   onExpire: () => void;
 }) => {
-  const [expire, setExpire] = useState(() =>
+  const [expire] = useState(() =>
     expiryTimestamp instanceof Time
       ? expiryTimestamp
       : new Time(expiryTimestamp)
@@ -24,13 +17,11 @@ export const useTimer = ({
     useMemo(() => new Timer(expire), [expire])
   );
   const resetTimer = () => {
-    console.log(`resetTimer`);
-    
     setTimer(new Timer(expire));
     setCompleted(false);
   };
   const [completed, setCompleted] = useState(false);
-
+  const [timePast, setTimePast] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   useEffect(() => {
@@ -47,22 +38,21 @@ export const useTimer = ({
         setSeconds(0);
         setMinutes(0);
       } else {
+        setTimePast(expire.milisec - remaining.milisec)
         setSeconds(remaining.seconds);
         setMinutes(remaining.minutes);
       }
     }, Time.seconds(1));
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [completed, onExpire, timer]);
   return {
     seconds,
     minutes,
+    timePast,
     pause: () => timer.pause(),
     resume: () => timer.resume(),
     isRunning: true,
-    restart: () => {
-    console.log(`restart`);
-
-      resetTimer();
-    }, // TODO
+    restart: resetTimer // TODO
   };
 };

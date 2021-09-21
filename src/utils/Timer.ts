@@ -21,14 +21,10 @@ export class Timer{
   deadline: number = 0
   private pauseTime = 0
   constructor(time: Time){
-    console.log(`set try new timer`);
-
     this.deadLine = time
   }
   set deadLine(time: Time) {
     const currentTime = new Date().getTime()
-    console.log(`set new timer`);
-    
     this.deadline = new Date(currentTime + time.milisec).getTime()
   }
 

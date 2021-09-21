@@ -23,6 +23,7 @@ import {
   showHints,
   submitAns,
 } from "../store/GameReducers";
+import { getUI, setUI } from "../store/UIReducer";
 import {
   getHighScore,
   getUsername,
@@ -44,10 +45,11 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   const isPause = useAppSelector(getShowAns);
   const highScore = useAppSelector(getHighScore);
   const userUid = useAppSelector(getUserUid);
+  const shownHints =  useAppSelector(getUI.showHints)
 
   // const expiryTimestamp = useMemo(() =>  , [])
 
-  const { seconds, minutes, pause, resume, isRunning, restart } = useTimer({
+  const { seconds, minutes, pause, resume, isRunning, restart, timePast } = useTimer({
     // expiryTimestamp: new Date().getTime() + 300_000,
     expiryTimestamp: Time.minutes(2),
 
@@ -55,14 +57,19 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
       dispatch(showAnsThunk(''));
     },
   });
+  // console.log(`timePast: ${timePast}`);
+  let timeEnd = false
   useEffect(() => {
     const listener = () => {
       restart();
+      dispatch(setUI.showHints(false))
+      timeEnd = true
+      console.log(`dispatch flase`);
     };
 
     document.addEventListener(RESTART_TIMER, listener);
     return () => document.removeEventListener(RESTART_TIMER, listener);
-  }, [restart]);
+  }, [dispatch, restart]);
 
   if (isPause && isRunning) {
     pause();
@@ -73,6 +80,13 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
     dispatch(
       setNewHighScoreThunk({ newHighScore: score, id: userUid, username })
     );
+  }
+
+  // TODO if(timePast === Time.second(30)) show hint ui if not shown alredy
+  if(!shownHints && timePast >= Time.seconds(30) && timePast < Time.seconds(32)){
+      dispatch(setUI.showHints(true))
+      console.log(`dispatch true`);
+      
   }
 
   return (
