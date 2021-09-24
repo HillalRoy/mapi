@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Time, Timer } from "../utils/Timer";
 
 export const useTimer = ({

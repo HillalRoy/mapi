@@ -10,9 +10,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { useTimer } from "../hooks/timer";
 import { auth } from "../store/Firebase";
 import {
-  getCurCountry,
   getCurCountryCode,
-  getPlaces,
   getScore,
   getShowAns,
   getShowHints,
@@ -21,7 +19,6 @@ import {
   RESTART_TIMER,
   showAnsThunk,
   showHints,
-  submitAns,
 } from "../store/GameReducers";
 import { getUI, setUI } from "../store/UIReducer";
 import {
@@ -58,13 +55,10 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
     },
   });
   // console.log(`timePast: ${timePast}`);
-  let timeEnd = false
   useEffect(() => {
     const listener = () => {
       restart();
       dispatch(setUI.showHints(false))
-      timeEnd = true
-      console.log(`dispatch flase`);
     };
 
     document.addEventListener(RESTART_TIMER, listener);
@@ -85,8 +79,6 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   // TODO if(timePast === Time.second(30)) show hint ui if not shown alredy
   if(!shownHints && timePast >= Time.seconds(30) && timePast < Time.seconds(32)){
       dispatch(setUI.showHints(true))
-      console.log(`dispatch true`);
-      
   }
 
   return (

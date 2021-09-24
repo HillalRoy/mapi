@@ -11,10 +11,6 @@ export class Time{
   get days() { return Math.floor( this.milisec/(1000*60*60*24) )}
 }
 
-type TimeEvents = {
-  time: Time,
-
-}
 
 export class Timer{
 
