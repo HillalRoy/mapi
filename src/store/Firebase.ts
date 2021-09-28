@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 
@@ -15,7 +15,6 @@ firebase.initializeApp({
   appId: "1:325914929273:web:94ed448366e2445db38ca8",
   measurementId: "G-KLTLYCSS41",
 });
-console.log("commmma");
 
 export const auth = firebase.auth()
 export const firestore = firebase.firestore()

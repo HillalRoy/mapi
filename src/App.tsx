@@ -5,7 +5,6 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 
 import { GamePage } from "./screens/Game";
-import { AddLocations } from "./screens/AddLocations";
 
 
 
@@ -15,9 +14,6 @@ const Routes = () => {
       <Switch>
         <Route path="/play">
           <GamePage />
-        </Route>
-        <Route path="/add-location-220">
-          <AddLocations />
         </Route>
         <Route path="/">
           <HomePage></HomePage>

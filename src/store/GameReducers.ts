@@ -6,7 +6,9 @@ import { RootState } from "./store";
 type GameState = {
   currentPlace: Place;
   places: Place[];
-  placesState: "loading" | "loaded" | "empty",
+  placesState: "loading" | "loaded" | "empty";
+  placesViewState: "loading" | "loaded" | "empty";
+
   showAns: boolean;
   shownPlaces: Place[];
   score: number;
@@ -18,6 +20,7 @@ const initialState: GameState = {
   currentPlace: { location: { lat: 0, lng: 0 }, code: "", country: "" },
   shownPlaces: [],
   placesState: "empty",
+  placesViewState: "empty",
   showAns: false,
   places: [],
   score: 0,
@@ -25,23 +28,24 @@ const initialState: GameState = {
 };
 
 const getNewPlace = (places: Place[]): Place => {
-  if(places.length > 0)
-    return places[Math.floor(Math.random() * places.length)] 
+  if (places.length > 0)
+    return places[Math.floor(Math.random() * places.length)];
   else return { location: { lat: 0, lng: 0 }, code: "", country: "" };
-}
-
+};
 
 export const loadPlacesThunk = createAsyncThunk("game/setPlaces", async () => {
   // const locationCollection = firebase.firestore().collection("locations");
 
   // const places = await locationCollection.get();
-  const reqs = Array(10).fill(0).map(c=> fetch(`/assets/loc/loc-${random(409)}.json`).then(v=> v.json()));
-  const ress = await Promise.all(reqs) as Place[][]
-  const places = ress.flat()
-  console.log(places);
-  return places
+  const reqs = Array(10)
+    .fill(0)
+    .map((c) =>
+      fetch(`/assets/loc/loc-${random(409)}.json`).then((v) => v.json())
+    );
+  const ress = (await Promise.all(reqs)) as Place[][];
+  const places = ress.flat();
+  return places;
   // places.forEach((v) => (countryList as any[]).push(v.data()));
-
 });
 
 export const showAnsThunk = createAsyncThunk(
@@ -57,17 +61,30 @@ export const gameSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    updateLoacation: (state) => ({...state, currentPlace: getNewPlace(state.places)}),
+    updateLoacation: (state) => ({
+      ...state,
+      currentPlace: getNewPlace(state.places),
+    }),
+    setPlaceView: (
+      state,
+      { payload: s }: PayloadAction<GameState["placesViewState"]>
+    ) => {
+      return {
+        ...state,
+        placesViewState: s,
+      };
+    },
     submitAns: (state, { payload: ans }: PayloadAction<string>) => {
       if (ans === state.currentPlace.country) {
-        audioEngine.play(audioEngine.onClick)
+        audioEngine.play(audioEngine.onClick);
         return {
           ...state,
+          placesViewState: "loading",
           currentPlace: getNewPlace(state.places),
           score: state.score + 1,
         };
       }
-      audioEngine.play(audioEngine.wrongClick)
+      audioEngine.play(audioEngine.wrongClick);
       return { ...state, currentPlace: getNewPlace(state.places) };
     },
     restartGame: (state, _: PayloadAction<any>) => {
@@ -75,6 +92,7 @@ export const gameSlice = createSlice({
       document.dispatchEvent(new Event(RESTART_TIMER));
       return {
         ...state,
+        placesViewState: "loading",
         currentPlace: getNewPlace(state.places),
         score: 0,
       };
@@ -83,6 +101,7 @@ export const gameSlice = createSlice({
       // Todo move back to home
       return {
         ...state,
+        placesViewState: "loading",
         currentPlace: getNewPlace(state.places),
         score: 0,
       };
@@ -91,17 +110,18 @@ export const gameSlice = createSlice({
     startNewGame: (state, _: PayloadAction<any>) => {
       return {
         ...state,
+        placesViewState: "loading",
         currentPlace: getNewPlace(state.places),
         shownPlaces: [],
         showAns: false,
         score: 0,
       };
     },
-    showHints: (state, {payload: show}: PayloadAction<boolean>) => {
+    showHints: (state, { payload: show }: PayloadAction<boolean>) => {
       // Todo move back to home
       return {
         ...state,
-        showHints: show
+        showHints: show,
       };
     },
   },
@@ -111,9 +131,9 @@ export const gameSlice = createSlice({
       (state, { payload: places }) => ({
         ...state,
         places,
+        placesViewState: "loading",
         currentPlace: getNewPlace(places),
         placesState: "loaded",
-
       })
     );
 
@@ -127,10 +147,10 @@ export const gameSlice = createSlice({
       placesState: "empty",
     }));
 
-
     builder.addCase(showAnsThunk.fulfilled, (state, { payload: ans }) => ({
       ...state,
       showAns: false,
+      placesViewState: "loading",
       currentPlace: getNewPlace(state.places),
       score: ans === state.currentPlace.country ? state.score + 1 : state.score,
     }));
@@ -144,15 +164,26 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { submitAns, restartGame, giveupGame, showHints, startNewGame, updateLoacation } =
-  gameSlice.actions;
+export const {
+  submitAns,
+  restartGame,
+  giveupGame,
+  showHints,
+  startNewGame,
+  updateLoacation,
+  setPlaceView,
+} = gameSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
+export const getGameState = {
+  placeViewState: (state: RootState) => state.game.placesViewState,
+};
+
 export const getCurCoordinates = (state: RootState) =>
   state.game.currentPlace.location;
 export const getCurCountry = (state: RootState) =>
   state.game.currentPlace.country;
-  export const getCurCountryCode = (state: RootState) =>
+export const getCurCountryCode = (state: RootState) =>
   state.game.currentPlace.code;
 export const getPlaces = (state: RootState) => state.game.places;
 export const getScore = (state: RootState) => state.game.score;

@@ -1,6 +1,8 @@
+import { motion, Variants } from "framer-motion";
 import React, { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useHistory } from "react-router-dom";
+import styled from "styled-components";
 import { audioEngine } from "../audios/audioEngine";
 import { GameOptions } from "../components/GameOptions";
 import { Hints } from "../components/Hints";
@@ -11,6 +13,7 @@ import { useTimer } from "../hooks/timer";
 import { auth } from "../store/Firebase";
 import {
   getCurCountryCode,
+  getGameState,
   getScore,
   getShowAns,
   getShowHints,
@@ -28,6 +31,7 @@ import {
   setNewHighScoreThunk,
 } from "../store/UserReducers";
 import { Time } from "../utils/Timer";
+import { sleep } from "../utils/tools";
 import "./game.scss";
 
 const buttonBg = { backgroundImage: "url('/assets/buttonbg.png')" };
@@ -42,23 +46,25 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   const isPause = useAppSelector(getShowAns);
   const highScore = useAppSelector(getHighScore);
   const userUid = useAppSelector(getUserUid);
-  const shownHints =  useAppSelector(getUI.showHints)
+  const shownHints = useAppSelector(getUI.showHints);
 
   // const expiryTimestamp = useMemo(() =>  , [])
 
-  const { seconds, minutes, pause, resume, isRunning, restart, timePast } = useTimer({
-    // expiryTimestamp: new Date().getTime() + 300_000,
-    expiryTimestamp: Time.minutes(2),
+  const { seconds, minutes, pause, resume, isRunning, restart, timePast } =
+    useTimer({
+      // expiryTimestamp: new Date().getTime() + 300_000,
+      expiryTimestamp: Time.minutes(2),
 
-    onExpire: () => {
-      dispatch(showAnsThunk(''));
-    },
-  });
+      onExpire: () => {
+        dispatch(showAnsThunk(""));
+      },
+    });
   // console.log(`timePast: ${timePast}`);
   useEffect(() => {
-    const listener = () => {
+    const listener = async () => {
+      await sleep(200); // the event calling from reducer
       restart();
-      dispatch(setUI.showHints(false))
+      dispatch(setUI.showHints(false));
     };
 
     document.addEventListener(RESTART_TIMER, listener);
@@ -77,8 +83,11 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   }
 
   // TODO if(timePast === Time.second(30)) show hint ui if not shown alredy
-  if(!shownHints && timePast >= Time.seconds(30) && timePast < Time.seconds(32)){
-      dispatch(setUI.showHints(true))
+  if (
+    !shownHints &&
+    timePast === Time.seconds(90) 
+  ) {
+    dispatch(setUI.showHints(true));
   }
 
   return (
@@ -122,7 +131,7 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
       <div className="title z1"> {APP_NAME} </div>
       <div className="logo z1">
         <img src={`${process.env.PUBLIC_URL}/assets/jis.png`} alt="" />
-        <Hints/>
+        <Hints />
       </div>
     </>
   );
@@ -130,21 +139,97 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
 
 const GameOverOverLay = () => {
   const showHint = useAppSelector(getShowHints);
-  const dispatch = useAppDispatch()
-  const place = useAppSelector(getCurCountryCode)
+  const dispatch = useAppDispatch();
+  const place = useAppSelector(getCurCountryCode);
   return (
     <div
       onClick={() => dispatch(showHints(false))}
-     className={`game-over ${showHint ? "show" : "hide"}`}>
-
-      <div style={{ width: "35%", backgroundColor: "#663036", padding: "2rem"}}  className="card">
-          <img style={{
-            width: "100%"
-          }} src={`/assets/map/${place.toLocaleLowerCase()}/vector.svg`} alt="" />
+      className={`game-over ${showHint ? "show" : "hide"}`}
+    >
+      <div
+        style={{ width: "35%", backgroundColor: "#663036", padding: "2rem" }}
+        className="card"
+      >
+        <img
+          style={{
+            width: "100%",
+          }}
+          src={`/assets/map/${place.toLocaleLowerCase()}/vector.svg`}
+          alt=""
+        />
       </div>
     </div>
   );
 };
+
+const StyledLoadingDiv = styled(motion.div)<{
+  "bg-color": string;
+  "z-index"?: number;
+}>`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: ${(props) => props["bg-color"] || "#334400"};
+  z-index: ${(props) => props["z-index"] ?? 1};
+  overflow: hidden;
+`;
+
+const loadingVriants: Variants = {
+  visible: {
+    zIndex: 1,
+    transition: {
+      duration: 0.4,
+      when: "beforeChildren",
+      staggerChildren: 0.15,
+      staggerDirection: 1,
+    },
+  },
+  hidden: {
+    zIndex: -1,
+    transition: {
+      delayChildren: 0.3,
+      duration: 0.5,
+      staggerDirection: -10,
+      when: "afterChildren",
+    },
+  },
+};
+const itemVriants: Variants = {
+  visible: {
+    width: "100%",
+    transition: {
+      duration: 0.3,
+    },
+  },
+  hidden: {
+    width: 0,
+    transition: {
+      duration: 0.8,
+    },
+  },
+};
+
+const LoadingStreatView = () => {
+  const show = useAppSelector(
+    (s) => !(getGameState.placeViewState(s) === "loaded")
+  );
+
+  return (
+    <>
+      <StyledLoadingDiv
+        initial="hidden"
+        exit="hidden"
+        animate={show ? "visible" : "hidden"}
+        variants={loadingVriants}
+        bg-color="transparent"
+      >
+        <StyledLoadingDiv variants={itemVriants} bg-color="#330022" />
+        <StyledLoadingDiv variants={itemVriants} bg-color="#730022" />
+      </StyledLoadingDiv>
+    </>
+  );
+};
+
 export const GamePage = () => {
   const username = useAppSelector(getUsername);
   const history = useHistory();
@@ -160,6 +245,7 @@ export const GamePage = () => {
         <StreetView />
       </div>
       <div className="overlay">
+        <LoadingStreatView />
         <div className="top z1">
           <ScoreBoard username={username} score={score} />
         </div>

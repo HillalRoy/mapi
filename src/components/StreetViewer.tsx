@@ -1,17 +1,24 @@
+import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { loadGMaps } from "../gapi/loadGMap";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { getCurCoordinates, loadPlacesThunk, RESTART_TIMER, updateLoacation } from "../store/GameReducers";
-
+import {
+  getCurCoordinates,
+  getGameState,
+  loadPlacesThunk,
+  RESTART_TIMER,
+  setPlaceView,
+  updateLoacation,
+} from "../store/GameReducers";
 
 const useStreetView = (coordinates: {
   lat: number;
   lng: number;
-}): [google.maps.StreetViewPanorama | undefined, boolean, unknown] => {
+}): [google.maps.StreetViewPanorama | undefined, unknown] => {
   const [p, setP] = useState<google.maps.StreetViewPanorama>();
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>();
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     loadGMaps()
@@ -30,42 +37,47 @@ const useStreetView = (coordinates: {
           );
           setP(panorama);
           // panorama.setPosition()
-          setLoading(false);
+          // setLoading(false);
+          dispatch(setPlaceView("loaded"));
         } catch (err) {
           setError(err);
-          setLoading(false);
+          dispatch(setPlaceView("loaded"));
         }
       })
       .catch((error) => setError(error));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    setLoading(true)
+    dispatch(setPlaceView("loading"));
+
     loadGMaps().then(async (google) => {
       const sv = new google.maps.StreetViewService();
       p?.setVisible(false);
-      try{
-        const { data } = await sv.getPanorama({ location: coordinates, radius: 50 })
+      try {
+        const { data } = await sv.getPanorama({
+          location: coordinates,
+          radius: 50,
+        });
         const location = data.location!;
-        p?.setPov({ heading: 34, pitch: 10})
-        p?.setZoom(0)
+        p?.setPov({ heading: 34, pitch: 10 });
+        p?.setZoom(0);
         p?.setPano(location.pano as string);
         p?.setVisible(true);
-        document.dispatchEvent(new Event(RESTART_TIMER))
-        setLoading(false)
-      }catch(err) {
-        dispatch(updateLoacation())
+        document.dispatchEvent(new Event(RESTART_TIMER));
+        dispatch(setPlaceView("loaded"));
+      } catch (err) {
+        dispatch(updateLoacation());
       }
-
     });
   }, [coordinates, dispatch, error, p]);
 
-  return [p, loading, error];
+  return [p, error];
 };
 
 export const StreetView = () => {
   const coordinates = useAppSelector(getCurCoordinates);
   const placesState = useAppSelector((s) => s.game.placesState);
+  const show = useAppSelector(s => getGameState.placeViewState(s) === "loaded")
 
   const dispatch = useAppDispatch();
   if (placesState === "empty") {
@@ -75,8 +87,10 @@ export const StreetView = () => {
 
   return (
     <>
-      <div id="map"></div>
-      <div id="pano"></div>
+      <motion.div
+        initial= {{opacity:0}}
+        animate= {{opacity: show ? 1 : 0}}
+       id="pano"/>
     </>
   );
 };
