@@ -2,9 +2,8 @@ import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 
 import "./name-register.scss";
-import firebase from "firebase";
 import { startNewGame } from "../store/GameReducers";
-import { auth } from "../store/Firebase";
+import { auth, authProviders } from "../store/Firebase";
 import BtnGoogleLignt from "../img/btn_google_light.svg";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { audioEngine } from "../audios/audioEngine";
@@ -14,7 +13,7 @@ const LoginBtns = () => {
   const googleLogin = async () => {
     audioEngine.firstUserInteraction();
     try {
-      const provider = new firebase.auth.GoogleAuthProvider();
+      const provider = new authProviders.GoogleAuthProvider();
       await auth.signInWithPopup(provider);
     } catch (error) {
       console.log(error);
