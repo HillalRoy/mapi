@@ -1,6 +1,10 @@
 export class Time{
   constructor(public milisec: number){ }
 
+  static secondMatch(ms: number, sec: number): boolean {
+    return Math.floor(ms/1000) === sec
+  }
+
   static seconds(sec: number) { return sec*1000 }
   static minutes(min: number) { return this.seconds(min*60) }
   static hours(h: number) { return this.minutes(h*60) }

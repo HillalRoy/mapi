@@ -23,7 +23,7 @@ import {
   showAnsThunk,
   showHints,
 } from "../store/GameReducers";
-import { getUI, setUI } from "../store/UIReducer";
+import { setUI } from "../store/UIReducer";
 import {
   getHighScore,
   getUsername,
@@ -46,7 +46,6 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   const isPause = useAppSelector(getShowAns);
   const highScore = useAppSelector(getHighScore);
   const userUid = useAppSelector(getUserUid);
-  const shownHints = useAppSelector(getUI.showHints);
 
   // const expiryTimestamp = useMemo(() =>  , [])
 
@@ -83,11 +82,9 @@ const ScoreBoard: React.FC<{ username: string; score: number }> = ({
   }
 
   // TODO if(timePast === Time.second(30)) show hint ui if not shown alredy
-  if (
-    !shownHints &&
-    timePast === Time.seconds(90) 
-  ) {
+  if(Time.secondMatch(timePast, 90)) {
     dispatch(setUI.showHints(true));
+
   }
 
   return (
